@@ -1,7 +1,8 @@
 from flask import Flask, render_template
+from app import create_app
 
 
-app = Flask(__name__)
+app = create_app()
 
 
 @app.route("/")
@@ -45,7 +46,3 @@ def photos_ecuador():
             ("https://lh3.googleusercontent.com/4EQHzHkciQ5VN_U7-rBV0yGrburaafmjbytH46wbpveOvsRsrpP6SxHhrXLvXRzxtSh3ch0zPwA9H2G45wDV87F3f4pRbT03yJ4JUwnWVn9sD5cT0OKGqQhUg1fsO4VZFlYnW7apvQ=w2400", "A Hummingbird")]}
 
     return render_template('photos_ecuador.html', **templateData)
-
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=80, debug=True)
