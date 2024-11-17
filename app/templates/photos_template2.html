@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+        <div class="container">
+            <h1>{{ title }}</h1>
+        <div class="container-md">
+        {% for row in rows %}
+            <div class="row justify-content-center">
+                {% for link, caption in row %}
+                <div class="col-4">
+                    <figure class="figure">
+                        <img src= "{{ link  }}" class="figure-img img-fluid rounded" alt="{{ caption }}">
+                        <figcaption class="figure-caption">{{ caption }}</figcaption>
+                    </figure>
+                </div>
+                {% endfor %}
+            </div>
+       {% endfor %}
+        </div>
+        </div>
+{% endblock %}
