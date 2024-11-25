@@ -14,7 +14,7 @@ class Base(DeclarativeBase):
 
 db = SQLAlchemy(model_class=Base)
 app = create_app()
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////media/phil/m2ssd/web/website/images.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////media/phil/m2ssd/web/website/app/db/images.db"
 db.init_app(app)
 
 
