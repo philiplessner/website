@@ -1,15 +1,18 @@
+import os
 import csv
 from pathlib import PurePath
-from typing import Dict, List
+from typing import List
 from pprint import pprint
 import sqlalchemy as sa
-from sqlalchemy import ForeignKey, func
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, sessionmaker, DeclarativeBase
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import select
 
-db = sa.create_engine("sqlite:///images.db")
-#db = sa.create_engine("mysql+mysqldb://root:blueskyMorning1!@localhost:3306/msql-images.db")
+C = os.path.abspath(os.path.dirname(__file__))
+path_to_db = "".join(["sqlite:///", C, "/images.db"])
+print(path_to_db)
+db = sa.create_engine(path_to_db)
 Session = sessionmaker(bind=db)
 
 
@@ -44,21 +47,6 @@ class Image(Base):
 def main() -> None:
     Base.metadata.create_all(db)
 
-def add_data(pagedata:dict, pageurl:str) -> None:
-    with Session() as session:
-        page = Page(pagetitle=pagedata["title"], pageroute=pageurl)
-        session.add(page)
-        session.commit()
-        for i, row in enumerate(pagedata["rows"]):
-            for j, column in enumerate(row):
-                imagelink =column[0]
-                imagetitle = column[1]
-                image = Image(imagelink=imagelink, imagetitle=imagetitle,
-                              pagerow=i, pagecolumn=j)
-                image.pages = page
-                session.add(image)
-        session.commit()
-
 
 def csv2db(csvfile: str) -> None:
     rows = list()
@@ -86,26 +74,6 @@ def csv2db(csvfile: str) -> None:
         session.commit()
 
 
-
-def make_template(pagename:str) -> Dict:
-    templateData = dict()
-    rows = list()
-    with Session() as session:
-        stmt =select(Page.pagetitle).where(Page.pagetitle==pagename)
-        templateData.update({"title": session.execute(stmt).first()[0]})
-        stmt = select(func.max(Image.pagerow)).join(Page).where(Page.pagetitle==pagename)
-        maxrows = session.execute(stmt).all()[0][0]
-        for i in range(maxrows+1):
-            stmt = (select(Image.imagelink, Image.imagetitle)
-                    .select_from(Image)
-                    .join(Page, Image.page_id==Page.id)
-                    .where(Page.pagetitle==pagename)
-                    .where(Image.pagerow==i))
-            rows.append(session.execute(stmt).all())
-    templateData.update({"rows": rows})
-    return templateData
-
-
 def print_database() -> None:
     with Session() as session:
         stmt = (select(Image.imagelink, Image.imagetitle,
@@ -119,14 +87,6 @@ def print_database() -> None:
 if __name__ == "__main__":
 #    db = sa.create_engine("sqlite:///:memory:")
     main()
-    csv2db("ecuador.csv")
-    csv2db("brazil.csv")
-    #add_data(ecuador, "/photos/ecuador")
-    #add_data(brazil, "photos/brazil")
+    csv2db("malaysia.csv")
     print_database()
     print("\n\n")
-    template = make_template("Ecuador")
-    pprint(template)
-    print("\n\n")
-    template = make_template("Brazil")
-    pprint(template)
