@@ -1,4 +1,5 @@
 from typing import Dict, List
+import os
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
@@ -14,7 +15,8 @@ class Base(DeclarativeBase):
 
 db = SQLAlchemy(model_class=Base)
 app = create_app()
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////media/phil/m2ssd/web/website/app/db/images.db"
+C = os.path.abspath(os.path.dirname(__file__))
+app.config["SQLALCHEMY_DATABASE_URI"] = "".join(["sqlite:///", C, "/app/db/images.db"])
 db.init_app(app)
 
 
