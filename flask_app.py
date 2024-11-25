@@ -1,8 +1,69 @@
+from typing import Dict, List
 from flask import Flask, render_template
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy import ForeignKey, func
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import relationship
 from app import create_app
 
 
+class Base(DeclarativeBase):
+    pass
+
+
+db = SQLAlchemy(model_class=Base)
 app = create_app()
+print(app.instance_path)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////media/phil/m2ssd/web/website/images.db"
+db.init_app(app)
+
+
+class Page(db.Model):
+    __tablename__ = "pages_table"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    pagetitle: Mapped[str]
+    pageroute: Mapped[str]
+    images: Mapped[List["Image"]] = relationship(back_populates="pages")
+
+
+class Image(db.Model):
+    __tablename__ = "images_table"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    imagelink: Mapped[str]
+    imagetitle: Mapped[str]
+    pagerow: Mapped[int]
+    pagecolumn: Mapped[int]
+    page_id: Mapped[int] = mapped_column(ForeignKey("pages_table.id"))
+    pages: Mapped["Page"] = relationship(back_populates="images")
+
+    def __repr__(self) -> str:
+        return f"<Image(id={self.id},imagelink={self.imagelink},imagetitle={self.imagetitle},pagerow={self.pagerow},pagecolumn={self.pagecolumn})>"
+
+with app.app_context():
+    db.create_all()
+
+
+def make_template(pagename:str) -> Dict:
+    templateData = dict()
+    rows = list()
+    stmt = db.select(Page.pagetitle).where(Page.pagetitle==pagename)
+    pname = db.session.execute(stmt)
+    print(pname.scalar())
+    templateData.update({"title": db.first_or_404(stmt)})
+    stmt = db.select(func.max(Image.pagerow)).join(Page).where(Page.pagetitle==pagename)
+    maxrows = db.session.execute(stmt).all()[0][0]
+    for i in range(maxrows+1):
+        stmt = (db.select(Image.imagelink, Image.imagetitle)
+                .select_from(Image)
+                .join(Page, Image.page_id==Page.id)
+                .where(Page.pagetitle==pagename)
+                .where(Image.pagerow==i))
+        rows.append(db.session.execute(stmt).all())
+    templateData.update({"rows": rows})
+    return templateData
 
 
 @app.route("/")
@@ -31,6 +92,7 @@ def about_me():
 @app.route("/photos/ecuador")
 def photos_ecuador():
 
+    '''
     templateData = {
             "title": "Ecuador",
             "rows":  [[("https://lh3.googleusercontent.com/Z1y6Uil3kQoJKEzTvnhwmQEoeFuY28woi_n-DcrtDo3mkYftjd8g_SDfndGeYZ9sLBgVMCcMGoy2F8I9qTKHAkKlq57p4xeAw-fhq7KfjEVGbkMXGkcJqavMDJembBfqNjzSGtlenA=w2400", "Glistening-green Tanager"),
@@ -45,6 +107,8 @@ def photos_ecuador():
             [("https://lh3.googleusercontent.com/g85WMHn88SJs6I_veBFL7MmlQqSH-j3F10kXbtmiUbvmH31_5fqXOcQ9DMBRqpA-x9cr_E2_33tSeJjr2gy22AORYLOngcuUZL6IH3GvzIn-AOGFxdaRvFry9h0cf-COQ928zchTGw=w2400", "Buff-Winged Starfrontlet"),
             ("https://lh3.googleusercontent.com/PJLSFsiOp63pwa5pIygGF76-vdiKGO0I_1rR8auYT0Pm5h287p4DSXPi8Fq9FqI__bjJ4Obwz0LHbTUbcjwtqqv-ezDIFK1pO1wgEUahIc9O4M9L3xQ_Clm2KNzVUDuzrnBL8p5viw=w2400", "Violet-Purple Coronet"),
             ("https://lh3.googleusercontent.com/4EQHzHkciQ5VN_U7-rBV0yGrburaafmjbytH46wbpveOvsRsrpP6SxHhrXLvXRzxtSh3ch0zPwA9H2G45wDV87F3f4pRbT03yJ4JUwnWVn9sD5cT0OKGqQhUg1fsO4VZFlYnW7apvQ=w2400", "Violet-Tailed Sylph")]]}
+    '''
+    templateData = make_template("Ecuador")
 
     return render_template('photos_template2.html', **templateData)
 
@@ -68,6 +132,13 @@ def photos_brazil():
 
     return render_template('photos_template2.html', **templateData)
 
+@app.route('/check_connection')
+def check_connection():
+    try:
+        db.session.execute("SELECT 1")
+        return "Database connection successful!"
+    except Exception as e:
+        return f"Database connection failed: {e}"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80, debug=True)
