@@ -6,7 +6,6 @@ from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.orm import relationship
-#from app import create_app
 from app import app
 
 
@@ -14,14 +13,7 @@ class Base(DeclarativeBase):
     pass
 
 
-db = SQLAlchemy(model_class=Base)
-#app = create_app()
-C = os.path.abspath(os.path.dirname(__file__))
-app.config["SQLALCHEMY_DATABASE_URI"] = "".join(["sqlite:///", C, "/app/db/images.db"])
-db.init_app(app)
-
-
-class Page(db.Model):
+class Page(Base):
     __tablename__ = "pages_table"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -30,7 +22,7 @@ class Page(db.Model):
     images: Mapped[List["Image"]] = relationship(back_populates="pages")
 
 
-class Image(db.Model):
+class Image(Base):
     __tablename__ = "images_table"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -44,6 +36,11 @@ class Image(db.Model):
     def __repr__(self) -> str:
         return f"<Image(id={self.id},imagelink={self.imagelink},imagetitle={self.imagetitle},pagerow={self.pagerow},pagecolumn={self.pagecolumn})>"
 
+
+db = SQLAlchemy(model_class=Base)
+C = os.path.abspath(os.path.dirname(__file__))
+app.config["SQLALCHEMY_DATABASE_URI"] = "".join(["sqlite:///", C, "/app/db/images.db"])
+db.init_app(app)
 with app.app_context():
     db.create_all()
 
