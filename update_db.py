@@ -1,3 +1,4 @@
+import sys
 import os
 import csv
 from pathlib import PurePath
@@ -7,11 +8,13 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import select
 from app.models import Base, Page, Image
 
+
 C = os.path.abspath(os.path.dirname(__file__))
 path_to_db = "".join(["sqlite:///", C, "/app/db/images.db"])
 print(path_to_db)
 db = sa.create_engine(path_to_db)
 Session = sessionmaker(bind=db)
+csvfile = sys.argv[1]
 
 
 def main() -> None:
@@ -55,8 +58,6 @@ def print_database() -> None:
 
 
 if __name__ == "__main__":
-#    db = sa.create_engine("sqlite:///:memory:")
     main()
-    csv2db("ecuador.csv")
+    csv2db(csvfile)
     print_database()
-    print("\n\n")
