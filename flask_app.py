@@ -1,12 +1,13 @@
 from typing import Dict, List
 import os
-from flask import Flask, render_template
+from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.orm import relationship
-from app import create_app
+#from app import create_app
+from app import app
 
 
 class Base(DeclarativeBase):
@@ -14,7 +15,7 @@ class Base(DeclarativeBase):
 
 
 db = SQLAlchemy(model_class=Base)
-app = create_app()
+#app = create_app()
 C = os.path.abspath(os.path.dirname(__file__))
 app.config["SQLALCHEMY_DATABASE_URI"] = "".join(["sqlite:///", C, "/app/db/images.db"])
 db.init_app(app)
