@@ -37,13 +37,26 @@ def csv2db(csvfile: str) -> None:
     pagedict.update({"pagetitle": title, "pageroute": route})
 
     with Session() as session:
-        page = Page(**pagedict)
-        session.add(page)
-        session.commit()
-        for row in rows:
-            image = Image(**row)
-            image.pages = page
-            session.add(image)
+        q = session.query(Page.id).filter(Page.pagetitle==pagedict["pagetitle"])
+        result = session.query(q.exists()).scalar()    # returns True or False
+        print(result)
+        if (not result):
+            page = Page(**pagedict)
+            session.add(page)
+            session.commit()
+            for row in rows:
+                image = Image(**row)
+                image.pages = page
+                session.add(image)
+        else:
+            stmt = select(Page.id).where(Page.pagetitle==pagedict["pagetitle"])
+            page = session.execute(stmt).scalar()
+            print(page)
+            for row in rows:
+                row.update({"page_id": page})
+                image = Image(**row)
+                session.add(image)
+
         session.commit()
 
 
