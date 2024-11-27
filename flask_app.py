@@ -1,4 +1,5 @@
 from typing import Dict
+import csv
 import os
 from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -34,6 +35,19 @@ def make_template(pagename:str) -> Dict:
     return templateData
 
 
+
+def about_me_template(csvfile: str) -> Dict:
+    rows = list()
+    references = dict()
+    with open(csvfile, newline='') as f:
+        reader = csv.reader(f, delimiter=',')
+        for i, row in enumerate(reader):
+            if (i != 0):
+                rows.append(tuple(row))
+    references.update({"references":rows})
+    return references
+
+
 @app.route("/")
 def hello():
     templateData = {
@@ -51,9 +65,49 @@ def hello():
 
 @app.route("/aboutme")
 def about_me():
+    templateData = {'title': 'About'}
+    templateData.update(about_me_template("about_me.csv"))
+    '''
     templateData = {
-            'title': 'About'
+            'title': 'About',
+            'references': [('P. Lessner',
+                 'KEMET-100 Years of Continued Innovation',
+                 'IEEE Power Electronics Magazine 6:2, June 2019',
+                 '06/08/19',
+                 'https://ieeexplore.ieee.org/document/8738923'),
+                ('P. Lessner',
+                 'Advances in Reliability of Conducting Polymers and '
+                 'Conducting Polymer Based Capacitors in High Humidity '
+                 'Environment',
+                 'ECS Transactions',
+                 '04/02/18',
+                 'http://ecst.ecsdl.org/content/85/13/115.short'),
+                ('Y.Jin,  J. Chen,  P. Lessner',
+                 'Thermal Stability Investigation of PEDOT Films from Chemical '
+                 'Oxidation and Prepolymerized Dispersion',
+                 'Electrochemistry 2013',
+                 '07/01/13',
+                 'https://www.jstage.jst.go.jp/article/electrochemistry/81/10/81_13-4-E50768/_article/-char/ja/'),
+                ('Xilin Xu,  Abhijit S. Gurav;  Philip M. Lessner; Clive A. '
+                 'Randall',
+                 'Robust BME Class-I MLCCs for Harsh-Environment Applications',
+                 'IEEE Transactions on Industrial Electronics ( Volume: 58, '
+                 'Issue: 7, July 2011)',
+                 '10/28/10',
+                 'https://ieeexplore.ieee.org/abstract/document/5613181'),
+                ('Y.Freeman; P.Lessner; A.J.Kramer; E.C.Dickey; J.Koenitzer; '
+                 'L.Mann; Q. Chen; T.Kinard; J.Qazi',
+                 'Low Voltage Specific Charge (CV/g) Loss in Ta Capacitors',
+                 'J. Electrochem. Soc. 157:7; 2010',
+                 '05/10/10',
+                 'https://iopscience.iop.org/article/10.1149/1.3391671'),
+                ('Y.Freeman; W.R.Harrell; I. Luzinov; B.Holman; P.Lessner',
+                 'Electrical characterization of tantalum capacitors with poly '
+                 '(3, 4-ethylenedioxythiophene) counter electrodes',
+                 'J. Electrochem. Soc. 156, p.G65',
+                 '04/21/09','https://iopscience.iop.org/article/10.1149/1.3116246')]
             }
+    '''
     return render_template('about_me.html', **templateData)
 
 
