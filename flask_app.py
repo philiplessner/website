@@ -42,7 +42,7 @@ def about_me_template(csvfile: str) -> Dict:
     rows = list()
     references = dict()
     Papers = namedtuple('Papers', ['authors', 'title', 'reference', 'date', 'link'])
-    with open(csvfile, newline='') as f:
+    with open(csv_path, newline='') as f:
         reader = csv.reader(f, delimiter=',')
         for i, row in enumerate(reader):
             if (i != 0):
