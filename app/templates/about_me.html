@@ -5,13 +5,22 @@
         </div>
         <br>
         <div class="container">
-            <p>Hi, I'm Phil Lessner</p>
+            <p>My experience is in development and manufacturing of 
+                electronic components. After obtaining my PhD in Chemical Engineering from the
+                University of Califorina, Berkeley in Chemical Engineering (with an Electrochemical
+                Engineering focus), I worked for several years as a researcher on electrochemical sensor, batteries,
+                and fuel cells. I then worked for several years in the field of EMI shielding developing metal-filled
+                gaskets and paints. Since 1996 I've been working on development of passive components such as capacitors,
+                inductors and resistors. A signficant part of this work has been with capacitors that have one
+                electrode that is an intrisincally conducting polymer. Below you can find a list of papers that
+                I and my co-authors have published.
+            </p>
         </div>
 
         <div class="container">
             <h2>Papers</h2>
             {% for reference in references %}
-            <p>  {{reference[0] }}  <a href= "{{ reference[4] }}">  {{ reference[1] }}</a>  {{ reference [2] }}  
+            <p>  {{reference.authors}}  <a href= "{{ reference.link }}">  {{ reference.title }}</a>  {{ reference.reference }}  
             </p>
             {% endfor %}
         </div>
