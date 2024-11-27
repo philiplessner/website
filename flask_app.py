@@ -38,6 +38,7 @@ def make_template(pagename:str) -> Dict:
 
 
 def about_me_template(csvfile: str) -> Dict:
+    csv_path = "".join([C, "/", csvfile])
     rows = list()
     references = dict()
     Papers = namedtuple('Papers', ['authors', 'title', 'reference', 'date', 'link'])
