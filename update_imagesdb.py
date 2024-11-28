@@ -1,3 +1,4 @@
+#!/bin/env python3
 import sys
 import os
 import csv
@@ -12,6 +13,15 @@ from app.models import Base, Page, Image
 csvfile = sys.argv[1]
 
 def main(): 
+    '''
+    Connect to the images database.
+    Load the load the table classes.
+    Create a session.
+    ***Parameters***
+    None
+    ***Returns***
+    Session object.
+    '''
     C = os.path.abspath(os.path.dirname(__file__))
     path_to_db = "".join(["sqlite:///", C, "/app/db/images.db"])
     print(path_to_db)
@@ -22,6 +32,20 @@ def main():
 
 
 def csv2db(csvfile: str, Session) -> None:
+    '''
+    Update the images database from a CSV file.
+    Name of CSV file is name of photos page (lower case).
+    Each row of CSV file is: imagelink, imagetitle, imagerow, imagecolumn.
+    A list of dicts is created from the rows of the CSV file:
+    [{"imagelink":imagelink, "imagetitle":imagetitle, "pagerow":pagerow, "pagecolumn":pagecolumn},...]
+    A dict is created to hold the page information:
+    {"pagetitle":title, "pageroute":route}
+    ***Parameters***
+    csvfile: path to csvfile
+    Session: Session object created in main()
+    ***Returns***
+    None
+    '''
     rows = list()
     pagedict = dict()
     with open(csvfile, newline='') as f:

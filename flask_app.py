@@ -1,4 +1,4 @@
-from typing import Dict, Union, List, Tuple
+from typing import Dict, Union, List
 from collections import namedtuple
 import csv
 import os
