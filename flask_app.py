@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Union, List, Tuple
 from collections import namedtuple
 import csv
 import os
@@ -10,18 +10,28 @@ from app.models import Base, Page, Image
 
 
 db = SQLAlchemy(model_class=Base)
-C = os.path.abspath(os.path.dirname(__file__))
-app.config["SQLALCHEMY_DATABASE_URI"] = "".join(["sqlite:///", C, "/app/db/images.db"])
+# We need to get this path to find the file. It will be different on the development and production server.
+path2this_directory = os.path.abspath(os.path.dirname(__file__))
+app.config["SQLALCHEMY_DATABASE_URI"] = "".join(["sqlite:///", path2this_directory, "/app/db/images.db"])
 db.init_app(app)
 with app.app_context():
     db.create_all()
 
 
-def make_template(pagename:str) -> Dict:
+def photos_template(pagename:str) -> Dict[str, Union[str, List[List[tuple[str, str]]]]]:
+    '''
+    Template for photo galleries pages.
+    ***Parameter***
+    pagename (str): Page Name (first letter should be capitalized). This is used to look up
+                    the entries in a sqlite database.
+    ***Returns***
+    Dictionary for template of form {title:pagename, 
+                                     rows:[[(imagelink, imagetitle ), ...], [(imagelink, imagetitle), ...]]}
+    Each entry is a tuple. Each row is a list of tuples. The complete structure is a list of lists.
+    '''
     templateData = dict()
     rows = list()
     stmt = db.select(Page.pagetitle).where(Page.pagetitle==pagename)
-    #db.session.execute(stmt)
     templateData.update({"title": db.first_or_404(stmt)})
     stmt = db.select(func.max(Image.pagerow)).join(Page).where(Page.pagetitle==pagename)
     maxrows = db.session.execute(stmt).all()[0][0]
@@ -37,8 +47,16 @@ def make_template(pagename:str) -> Dict:
 
 
 
-def about_me_template(csvfile: str) -> Dict:
-    csv_path = "".join([C, "/", csvfile])
+def about_me_template(csvfile: str) -> Dict[str, List]:
+    '''
+    Template for references for aboutme page.
+    ***Parameter***
+    csvfile (str): the name of the file. It should be in the top level directory.
+    ***Returns***
+    The references as a dict of namedtuples: {"references": [(authors, title, reference, date, link),...]}
+    Each NamedTuple holds one reference.
+    '''
+    csv_path = "".join([path2this_directory, "/", csvfile])
     rows = list()
     references = dict()
     Papers = namedtuple('Papers', ['authors', 'title', 'reference', 'date', 'link'])
@@ -49,6 +67,7 @@ def about_me_template(csvfile: str) -> Dict:
                 rows.append(Papers(*row))
     references.update({"references":rows})
     return references
+
 
 @app.route("/")
 def hello():
@@ -74,25 +93,25 @@ def about_me():
 
 @app.route("/photos/ecuador")
 def photos_ecuador():
-    templateData = make_template("Ecuador")
+    templateData = photos_template("Ecuador")
     return render_template('photos_template2.html', **templateData)
 
 
 @app.route("/photos/brazil")
 def photos_brazil():
-    templateData = make_template("Brazil")
+    templateData = photos_template("Brazil")
     return render_template('photos_template2.html', **templateData)
 
 
 @app.route("/photos/malaysia")
 def photos_malaysia():
-    templateData = make_template("Malaysia")
+    templateData = photos_template("Malaysia")
     return render_template('photos_template2.html', **templateData)
 
 
 @app.route("/photos/ghana")
 def photos_ghana():
-    templateData = make_template("Ghana")
+    templateData = photos_template("Ghana")
     return render_template('photos_template2.html', **templateData)
 
 if __name__ == "__main__":
