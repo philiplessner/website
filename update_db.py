@@ -9,19 +9,19 @@ from sqlalchemy.sql import select
 from app.models import Base, Page, Image
 
 
-C = os.path.abspath(os.path.dirname(__file__))
-path_to_db = "".join(["sqlite:///", C, "/app/db/images.db"])
-print(path_to_db)
-db = sa.create_engine(path_to_db)
-Session = sessionmaker(bind=db)
 csvfile = sys.argv[1]
 
-
-def main() -> None:
+def main(): 
+    C = os.path.abspath(os.path.dirname(__file__))
+    path_to_db = "".join(["sqlite:///", C, "/app/db/images.db"])
+    print(path_to_db)
+    db = sa.create_engine(path_to_db)
     Base.metadata.create_all(db)
+    Session = sessionmaker(bind=db)
+    return Session
 
 
-def csv2db(csvfile: str) -> None:
+def csv2db(csvfile: str, Session) -> None:
     rows = list()
     pagedict = dict()
     with open(csvfile, newline='') as f:
@@ -60,7 +60,7 @@ def csv2db(csvfile: str) -> None:
         session.commit()
 
 
-def print_database() -> None:
+def print_database(Session) -> None:
     with Session() as session:
         stmt = (select(Image.imagelink, Image.imagetitle,
                       Image.pagerow, Image.pagecolumn,
@@ -71,6 +71,6 @@ def print_database() -> None:
 
 
 if __name__ == "__main__":
-    main()
-    csv2db(csvfile)
-    print_database()
+    Session = main()
+    csv2db(csvfile, Session)
+    print_database(Session)
