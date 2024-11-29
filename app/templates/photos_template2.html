@@ -6,11 +6,12 @@
         {% for row in rows %}
             <div class="row justify-content-center">
                 {% for link, caption in row %}
-                <div class="col-4">
+                <div class="col-4 position-relative">
                     <figure class="figure">
                         <img src= "{{ link  }}" class="figure-img img-fluid rounded" alt="{{ caption }}">
                         <figcaption class="figure-caption">{{ caption }}</figcaption>
                     </figure>
+                        <a href = "{{ link }}" class="stretched-link"></a>
                 </div>
                 {% endfor %}
             </div>
