@@ -114,5 +114,11 @@ def photos_ghana():
     templateData = photos_template("Ghana")
     return render_template('photos_template2.html', **templateData)
 
+
+@app.route("/photos/australia")
+def photos_australia():
+    templateData = photos_template("Australia")
+    return render_template('photos_template2.html', **templateData)
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80, debug=True)
