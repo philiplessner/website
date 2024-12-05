@@ -57,15 +57,18 @@ def about_me_template(csvfile: str) -> Dict[str, List]:
     Each NamedTuple holds one reference.
     '''
     csv_path = "".join([path2this_directory, "/", csvfile])
-    rows = list()
+    papers = list()
+    patents = list()
     references = dict()
-    Papers = namedtuple('Papers', ['authors', 'title', 'reference', 'date', 'link'])
+    Papers = namedtuple('Papers', ['authors', 'title', 'reference', 'date', 'link', 'type'])
     with open(csv_path, newline='') as f:
         reader = csv.reader(f, delimiter=',')
         for i, row in enumerate(reader):
-            if (i != 0):
-                rows.append(Papers(*row))
-    references.update({"references":rows})
+            if ((i != 0) and (row[5] == "Paper")):
+                papers.append(Papers(*row))
+            if ((i != 0) and (row[5] == "Patent")):
+                patents.append(Papers(*row))
+    references.update({"papers": papers, "patents": patents})
     return references
 
 
