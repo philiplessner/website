@@ -6,7 +6,7 @@ from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 from app import app
-from app.models import Base, Page, Image
+from app.models import Base, Page, Image, Reference
 
 
 db = SQLAlchemy(model_class=Base)
@@ -72,6 +72,25 @@ def about_me_template(csvfile: str) -> Dict[str, List]:
     return references
 
 
+def about_me_template2():
+    References = namedtuple('References', ['authors', 'title', 'reference', 'date', 'link', 'type'])
+    references = dict()
+    stmt = (db.select(Reference.authors, Reference.title,
+                      Reference.refinfo, Reference.date,
+                      Reference.reflink, Reference.reftype)
+                      .select_from(Reference)
+                      .where(Reference.reftype == "Paper"))
+    papers = [References(*row) for row in db.session.execute(stmt).all()]
+    stmt = (db.select(Reference.authors, Reference.title,
+                      Reference.refinfo, Reference.date,
+                      Reference.reflink, Reference.reftype)
+                      .select_from(Reference)
+                      .where(Reference.reftype == "Patent"))
+    patents= [References(*row) for row in db.session.execute(stmt).all()]
+    references.update({"papers": papers, "patents": patents})
+    return references
+
+
 @app.route("/")
 def hello():
     templateData = {
@@ -90,7 +109,7 @@ def hello():
 @app.route("/aboutme")
 def about_me():
     templateData = {'title': 'About'}
-    templateData.update(about_me_template("about_me.csv"))
+    templateData.update(about_me_template2())
     return render_template('about_me.html', **templateData)
 
 
