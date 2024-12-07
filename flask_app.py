@@ -12,7 +12,7 @@ from app.models import Base, Page, Image, Reference
 db = SQLAlchemy(model_class=Base)
 # We need to get this path to find the file. It will be different on the development and production server.
 path2this_directory = os.path.abspath(os.path.dirname(__file__))
-app.config["SQLALCHEMY_DATABASE_URI"] = "".join(["sqlite:///", path2this_directory, "/app/db/images.db"])
+app.config["SQLALCHEMY_DATABASE_URI"] = "".join(["sqlite:///", path2this_directory, "/app/db/website.db"])
 db.init_app(app)
 with app.app_context():
     db.create_all()
@@ -46,33 +46,7 @@ def photos_template(pagename:str) -> Dict[str, Union[str, List[List[tuple[str, s
     return templateData
 
 
-
-def about_me_template(csvfile: str) -> Dict[str, List]:
-    '''
-    Template for references for aboutme page.
-    ***Parameter***
-    csvfile (str): the name of the file. It should be in the top level directory.
-    ***Returns***
-    The references as a dict of namedtuples: {"references": [(authors, title, reference, date, link),...]}
-    Each NamedTuple holds one reference.
-    '''
-    csv_path = "".join([path2this_directory, "/", csvfile])
-    papers = list()
-    patents = list()
-    references = dict()
-    Papers = namedtuple('Papers', ['authors', 'title', 'reference', 'date', 'link', 'type'])
-    with open(csv_path, newline='') as f:
-        reader = csv.reader(f, delimiter=',')
-        for i, row in enumerate(reader):
-            if ((i != 0) and (row[5] == "Paper")):
-                papers.append(Papers(*row))
-            if ((i != 0) and (row[5] == "Patent")):
-                patents.append(Papers(*row))
-    references.update({"papers": papers, "patents": patents})
-    return references
-
-
-def about_me_template2():
+def about_me_template():
     References = namedtuple('References', ['authors', 'title', 'reference', 'date', 'link', 'type'])
     references = dict()
     stmt = (db.select(Reference.authors, Reference.title,
@@ -81,12 +55,14 @@ def about_me_template2():
                       .select_from(Reference)
                       .where(Reference.reftype == "Paper"))
     papers = [References(*row) for row in db.session.execute(stmt).all()]
+    papers = sorted(papers, key=lambda x: x[3], reverse=True)
     stmt = (db.select(Reference.authors, Reference.title,
                       Reference.refinfo, Reference.date,
                       Reference.reflink, Reference.reftype)
                       .select_from(Reference)
                       .where(Reference.reftype == "Patent"))
     patents= [References(*row) for row in db.session.execute(stmt).all()]
+    patents = sorted(patents, key=lambda x: x[3], reverse=True)
     references.update({"papers": papers, "patents": patents})
     return references
 
@@ -109,7 +85,7 @@ def hello():
 @app.route("/aboutme")
 def about_me():
     templateData = {'title': 'About'}
-    templateData.update(about_me_template2())
+    templateData.update(about_me_template())
     return render_template('about_me.html', **templateData)
 
 
