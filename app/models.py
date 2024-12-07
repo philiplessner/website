@@ -31,3 +31,15 @@ class Image(Base):
 
     def __repr__(self) -> str:
         return f"<Image(id={self.id},imagelink={self.imagelink},imagetitle={self.imagetitle},pagerow={self.pagerow},pagecolumn={self.pagecolumn})>"
+    
+
+class Reference(Base):
+    __tablename__ = "references_table"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    authors: Mapped[str]
+    title: Mapped[str]
+    refinfo: Mapped[str]
+    date: Mapped[str]
+    reflink: Mapped[str]
+    reftype: Mapped[str]
+        

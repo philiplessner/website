@@ -23,7 +23,7 @@ def main():
     Session object.
     '''
     C = os.path.abspath(os.path.dirname(__file__))
-    path_to_db = "".join(["sqlite:///", C, "/app/db/images.db"])
+    path_to_db = "".join(["sqlite:///", C, "/app/db/website.db"])
     print(path_to_db)
     db = sa.create_engine(path_to_db)
     Base.metadata.create_all(db)
