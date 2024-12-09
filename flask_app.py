@@ -4,7 +4,7 @@ import os
 from flask import render_template
 from sqlalchemy import func
 from app import app, db
-from app.models import Page, Image, Reference
+from app.models import Page, Image, Reference, Blog
 
 
 # We need to get this path to find the file. It will be different on the development and production server.
@@ -63,6 +63,13 @@ def about_me_template():
     references.update({"papers": papers, "patents": patents})
     return references
 
+def blog_template():
+    stmt = (db.select(Blog.title, Blog.body, Blog.date, Blog.id)
+                      .select_from(Blog))
+    blogs = [row for row in db.session.execute(stmt).all()]
+    templateData = {"blogs": blogs}
+    return templateData
+
 
 @app.route("/")
 def home():
@@ -88,7 +95,19 @@ def about_me():
 
 @app.route("/blog")
 def blog():
-    return render_template('blog.html')
+    templateData = blog_template()
+    return render_template('blog.html', **templateData)
+
+
+@app.route("/blog/<blogid>")
+def blogpost(blogid):
+    stmt = (db.select(Blog.title, Blog.body, Blog.date, Blog.id)
+                      .select_from(Blog)
+                      .where(Blog.id == blogid))
+    blog = db.session.execute(stmt).all()
+    templateData = {"blogdata": blog}
+    print(templateData)
+    return render_template('blogpost.html', **templateData)
 
 @app.route("/photos/ecuador")
 def photos_ecuador():
