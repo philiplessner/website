@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
     <div class="container">
-        <h4>{{ blogdata[0][0] }}</h4>
+        <h2>{{ blogdata[0][0] }}</h2>
         <p>{{ blogdata[0][2] }}</p>
         <br>
-        <p> {{ blogdata[0][1] }}</p>
+        <p> {{ blogdata[0][1] |safe }}</p>
     </div>
 
 
