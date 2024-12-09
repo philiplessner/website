@@ -86,6 +86,10 @@ def about_me():
     return render_template('about_me.html', **templateData)
 
 
+@app.route("/blog")
+def blog():
+    return render_template('blog.html')
+
 @app.route("/photos/ecuador")
 def photos_ecuador():
     templateData = photos_template("Ecuador")
