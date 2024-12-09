@@ -7,7 +7,7 @@
         {% for blog in blogs %}
             <h4>{{ blog[0] }}</h4>
             <p>{{ blog[2] }}</p>
-            {{ blog[1]|truncate(200) |safe}}
+            {{ blog[1]|truncate(1000) |safe}}
             <p><a href="{{ url_for('blogpost', blogid=blog[3]) }}">More...</a></p>
             <br>
         {% endfor %}
