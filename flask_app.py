@@ -1,6 +1,5 @@
 from typing import Dict, Union, List
 from collections import namedtuple
-import csv
 import os
 from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -68,7 +67,7 @@ def about_me_template():
 
 
 @app.route("/")
-def hello():
+def home():
     templateData = {
             'title': 'Home',
             "imageData":  [("https://lh3.googleusercontent.com/a0b8trXwHAZyZldHkDL7quh3nk2A10EjCddB-RWvuo0zpyUYXz38ANTizqLbtpT-oio4Rc9QjByCdPJYVcKFWsyyn8kHbqu0sn_7BiU-D_s55OjbVXuAEC87vCVIZaMpYBPdiUqFjw=w2400", "Jaguar in the Brazilian Pantanal"),
