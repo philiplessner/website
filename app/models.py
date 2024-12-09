@@ -42,4 +42,12 @@ class Reference(Base):
     date: Mapped[str]
     reflink: Mapped[str]
     reftype: Mapped[str]
+
+
+class Blog(Base):
+    __tablename__ = "blogs_table"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    title: Mapped[str]
+    body: Mapped[str]
+    date: Mapped[str]
         
