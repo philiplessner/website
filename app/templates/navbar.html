@@ -17,15 +17,15 @@
             Photos
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="{{ url_for('photos_ecuador') }}">Ecuador</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('photos', location='ecuador') }}">Ecuador</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{{ url_for('photos_brazil') }}">Brazil</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('photos', location='brazil') }}">Brazil</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{{ url_for('photos_malaysia') }}">Malaysia</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('photos', location='malaysia') }}">Malaysia</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{{ url_for('photos_australia') }}">Australia</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('photos', location='australia') }}">Australia</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{{ url_for('photos_ghana') }}">Ghana</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('photos', location='ghana') }}">Ghana</a></li>
             <li><hr class="dropdown-divider"></li>
           </ul>
         </li>

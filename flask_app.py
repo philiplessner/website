@@ -109,34 +109,13 @@ def blogpost(blogid):
     print(templateData)
     return render_template('blogpost.html', **templateData)
 
-@app.route("/photos/ecuador")
-def photos_ecuador():
-    templateData = photos_template("Ecuador")
+
+@app.route("/photos/<location>")
+def photos(location):
+    cap_location = location.capitalize()
+    templateData = photos_template(cap_location)
     return render_template('photos_template2.html', **templateData)
 
-
-@app.route("/photos/brazil")
-def photos_brazil():
-    templateData = photos_template("Brazil")
-    return render_template('photos_template2.html', **templateData)
-
-
-@app.route("/photos/malaysia")
-def photos_malaysia():
-    templateData = photos_template("Malaysia")
-    return render_template('photos_template2.html', **templateData)
-
-
-@app.route("/photos/ghana")
-def photos_ghana():
-    templateData = photos_template("Ghana")
-    return render_template('photos_template2.html', **templateData)
-
-
-@app.route("/photos/australia")
-def photos_australia():
-    templateData = photos_template("Australia")
-    return render_template('photos_template2.html', **templateData)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80, debug=True)
