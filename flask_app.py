@@ -109,6 +109,14 @@ def blogpost(blogid):
     print(templateData)
     return render_template('blogpost.html', **templateData)
 
+
+@app.route("/photos/<location>")
+def photos(location):
+    cap_location = location.capitalize()
+    templateData = photos_template(cap_location)
+    return render_template('photos_template2.html', **templateData)
+
+
 @app.route("/photos/ecuador")
 def photos_ecuador():
     templateData = photos_template("Ecuador")
