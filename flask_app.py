@@ -67,6 +67,7 @@ def blog_template():
     stmt = (db.select(Blog.title, Blog.body, Blog.date, Blog.id)
                       .select_from(Blog))
     blogs = [row for row in db.session.execute(stmt).all()]
+    blogs = sorted(blogs, key=lambda x: x[2], reverse=True)
     templateData = {"blogs": blogs}
     return templateData
 
