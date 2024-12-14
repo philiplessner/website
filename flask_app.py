@@ -1,5 +1,4 @@
 from typing import Dict, Union, List
-from pprint import pprint
 from collections import namedtuple
 import os
 from flask import render_template
@@ -64,14 +63,6 @@ def about_me_template():
     references.update({"papers": papers, "patents": patents})
     return references
 
-def blog_template():
-    stmt = (db.select(Blog.title, Blog.body, Blog.date, Blog.id)
-                      .select_from(Blog))
-    blogs = [row for row in db.session.execute(stmt).all()]
-    blogs = sorted(blogs, key=lambda x: x[2], reverse=True)
-    templateData = {"blogs": blogs}
-    return templateData
-
 
 @app.route("/")
 def home():
@@ -88,39 +79,8 @@ def home():
     return render_template('index.html', **templateData)
 
 
-@app.route("/aboutme")
-def about_me():
-    templateData = {'title': 'About'}
-    templateData.update(about_me_template())
-    return render_template('about_me.html', **templateData)
-
-
 @app.route("/blog")
 def blog():
-    templateData = blog_template()
-    return render_template('blog.html', **templateData)
-
-
-@app.route("/blog/<blogid>")
-def blogpost(blogid):
-    stmt = (db.select(Blog.title, Blog.body, Blog.date, Blog.id)
-                      .select_from(Blog)
-                      .where(Blog.id == blogid))
-    blog = db.session.execute(stmt).all()
-    templateData = {"blogdata": blog}
-    print(templateData)
-    return render_template('blogpost.html', **templateData)
-
-
-@app.route("/photos/<location>")
-def photos(location):
-    cap_location = location.capitalize()
-    templateData = photos_template(cap_location)
-    return render_template('photos_template2.html', **templateData)
-
-
-@app.route("/blog_exp")
-def blog_exp():
     stmt = (db.select(Blog.title, Blog.abstract, Blog.date, Blog.medialink, Blog.mediatype, Blog.id)
                       .select_from(Blog))
     blogs = [row for row in db.session.execute(stmt).all()]
@@ -136,8 +96,31 @@ def blog_exp():
             row = []
             count = 0
     templateData = {"rows": rows}
-    pprint(templateData)
     return render_template('blog2.html', **templateData)
+
+
+@app.route("/blog/<blogid>")
+def blogpost(blogid):
+    stmt = (db.select(Blog.title, Blog.body, Blog.date, Blog.id)
+                      .select_from(Blog)
+                      .where(Blog.id == blogid))
+    blog = db.session.execute(stmt).all()
+    templateData = {"blogdata": blog}
+    return render_template('blogpost.html', **templateData)
+
+
+@app.route("/photos/<location>")
+def photos(location):
+    cap_location = location.capitalize()
+    templateData = photos_template(cap_location)
+    return render_template('photos_template2.html', **templateData)
+
+
+@app.route("/aboutme")
+def about_me():
+    templateData = {'title': 'About'}
+    templateData.update(about_me_template())
+    return render_template('about_me.html', **templateData)
 
 
 if __name__ == "__main__":
