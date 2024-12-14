@@ -118,5 +118,10 @@ def photos(location):
     return render_template('photos_template2.html', **templateData)
 
 
+@app.route("/blog_exp")
+def blog_exp():
+    return render_template('blog2.html')
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80, debug=True)
