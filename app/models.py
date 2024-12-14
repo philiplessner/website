@@ -50,4 +50,7 @@ class Blog(Base):
     title: Mapped[str]
     body: Mapped[str]
     date: Mapped[str]
+    abstract: Mapped[str]
+    medialink: Mapped[str]
+    mediatype: Mapped[str]
         

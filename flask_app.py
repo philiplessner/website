@@ -1,4 +1,5 @@
 from typing import Dict, Union, List
+from pprint import pprint
 from collections import namedtuple
 import os
 from flask import render_template
@@ -120,7 +121,23 @@ def photos(location):
 
 @app.route("/blog_exp")
 def blog_exp():
-    return render_template('blog2.html')
+    stmt = (db.select(Blog.title, Blog.abstract, Blog.date, Blog.medialink, Blog.mediatype, Blog.id)
+                      .select_from(Blog))
+    blogs = [row for row in db.session.execute(stmt).all()]
+    blogs = sorted(blogs, key=lambda x: x[2], reverse=True)
+    rows = list()
+    row = list()
+    count = 0
+    for blog in blogs:
+        row.append(blog)
+        count = count + 1
+        if (count == 2):
+            rows.append(row)
+            row = []
+            count = 0
+    templateData = {"rows": rows}
+    pprint(templateData)
+    return render_template('blog2.html', **templateData)
 
 
 if __name__ == "__main__":
