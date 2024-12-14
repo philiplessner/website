@@ -96,7 +96,7 @@ def blog():
             row = []
             count = 0
     templateData = {"rows": rows}
-    return render_template('blog2.html', **templateData)
+    return render_template('blog.html', **templateData)
 
 
 @app.route("/blog/<blogid>")
@@ -113,7 +113,7 @@ def blogpost(blogid):
 def photos(location):
     cap_location = location.capitalize()
     templateData = photos_template(cap_location)
-    return render_template('photos_template2.html', **templateData)
+    return render_template('photos_template.html', **templateData)
 
 
 @app.route("/aboutme")
