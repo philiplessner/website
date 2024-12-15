@@ -1,4 +1,3 @@
-from typing import Dict, Union, List
 from collections import namedtuple
 import os
 from flask import render_template
