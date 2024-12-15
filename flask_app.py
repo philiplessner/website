@@ -15,34 +15,6 @@ with app.app_context():
     db.create_all()
 
 
-def photos_template(pagename:str) -> Dict[str, Union[str, List[List[tuple[str, str]]]]]:
-    '''
-    Template for photo galleries pages.
-    ***Parameter***
-    pagename (str): Page Name (first letter should be capitalized). This is used to look up
-                    the entries in a sqlite database.
-    ***Returns***
-    Dictionary for template of form {title:pagename, 
-                                     rows:[[(imagelink, imagetitle ), ...], [(imagelink, imagetitle), ...]]}
-    Each entry is a tuple. Each row is a list of tuples. The complete structure is a list of lists.
-    '''
-    templateData = dict()
-    rows = list()
-    stmt = db.select(Page.pagetitle).where(Page.pagetitle==pagename)
-    templateData.update({"title": db.first_or_404(stmt)})
-    stmt = db.select(func.max(Image.pagerow)).join(Page).where(Page.pagetitle==pagename)
-    maxrows = db.session.execute(stmt).all()[0][0]
-    for i in range(maxrows+1):
-        stmt = (db.select(Image.imagelink, Image.imagetitle)
-                .select_from(Image)
-                .join(Page, Image.page_id==Page.id)
-                .where(Page.pagetitle==pagename)
-                .where(Image.pagerow==i))
-        rows.append(db.session.execute(stmt).all())
-    templateData.update({"rows": rows})
-    return templateData
-
-
 def about_me_template():
     References = namedtuple('References', ['authors', 'title', 'reference', 'date', 'link', 'type'])
     references = dict()
@@ -111,8 +83,28 @@ def blogpost(blogid):
 
 @app.route("/photos/<location>")
 def photos(location):
+    '''
+    cap_location(str): Page Name (first letter should be capitalized). This is used to look up
+                    the entries in a sqlite database.
+    Dictionary for template of form {title:pagename, 
+                                     rows:[[(imagelink, imagetitle ), ...], [(imagelink, imagetitle), ...]]}
+    Each entry is a tuple. Each row is a list of tuples. The complete structure is a list of lists.
+    '''
     cap_location = location.capitalize()
-    templateData = photos_template(cap_location)
+    templateData = dict()
+    rows = list()
+    stmt = db.select(Page.pagetitle).where(Page.pagetitle==cap_location)
+    templateData.update({"title": db.first_or_404(stmt)})
+    stmt = db.select(func.max(Image.pagerow)).join(Page).where(Page.pagetitle==cap_location)
+    maxrows = db.session.execute(stmt).all()[0][0]
+    for i in range(maxrows+1):
+        stmt = (db.select(Image.imagelink, Image.imagetitle)
+                .select_from(Image)
+                .join(Page, Image.page_id==Page.id)
+                .where(Page.pagetitle==cap_location)
+                .where(Image.pagerow==i))
+        rows.append(db.session.execute(stmt).all())
+    templateData.update({"rows": rows})
     return render_template('photos_template.html', **templateData)
 
 
