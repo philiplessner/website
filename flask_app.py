@@ -3,10 +3,10 @@ from collections import namedtuple
 import os
 from flask import render_template
 from sqlalchemy import func
-from app import app, db
+from app import create_app, db
 from app.models import Page, Image, Reference, Blog
 
-
+app = create_app()
 # We need to get this path to find the file. It will be different on the development and production server.
 path2this_directory = os.path.abspath(os.path.dirname(__file__))
 app.config["SQLALCHEMY_DATABASE_URI"] = "".join(["sqlite:///", path2this_directory, "/app/db/website.db"])
