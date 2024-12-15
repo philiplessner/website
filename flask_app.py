@@ -15,27 +15,6 @@ with app.app_context():
     db.create_all()
 
 
-def about_me_template():
-    References = namedtuple('References', ['authors', 'title', 'reference', 'date', 'link', 'type'])
-    references = dict()
-    stmt = (db.select(Reference.authors, Reference.title,
-                      Reference.refinfo, Reference.date,
-                      Reference.reflink, Reference.reftype)
-                      .select_from(Reference)
-                      .where(Reference.reftype == "Paper"))
-    papers = [References(*row) for row in db.session.execute(stmt).all()]
-    papers = sorted(papers, key=lambda x: x[3], reverse=True)
-    stmt = (db.select(Reference.authors, Reference.title,
-                      Reference.refinfo, Reference.date,
-                      Reference.reflink, Reference.reftype)
-                      .select_from(Reference)
-                      .where(Reference.reftype == "Patent"))
-    patents= [References(*row) for row in db.session.execute(stmt).all()]
-    patents = sorted(patents, key=lambda x: x[3], reverse=True)
-    references.update({"papers": papers, "patents": patents})
-    return references
-
-
 @app.route("/")
 def home():
     templateData = {
@@ -111,7 +90,24 @@ def photos(location):
 @app.route("/aboutme")
 def about_me():
     templateData = {'title': 'About'}
-    templateData.update(about_me_template())
+    References = namedtuple('References', ['authors', 'title', 'reference', 'date', 'link', 'type'])
+    references = dict()
+    stmt = (db.select(Reference.authors, Reference.title,
+                      Reference.refinfo, Reference.date,
+                      Reference.reflink, Reference.reftype)
+                      .select_from(Reference)
+                      .where(Reference.reftype == "Paper"))
+    papers = [References(*row) for row in db.session.execute(stmt).all()]
+    papers = sorted(papers, key=lambda x: x[3], reverse=True)
+    stmt = (db.select(Reference.authors, Reference.title,
+                      Reference.refinfo, Reference.date,
+                      Reference.reflink, Reference.reftype)
+                      .select_from(Reference)
+                      .where(Reference.reftype == "Patent"))
+    patents= [References(*row) for row in db.session.execute(stmt).all()]
+    patents = sorted(patents, key=lambda x: x[3], reverse=True)
+    references.update({"papers": papers, "patents": patents})
+    templateData.update(references)
     return render_template('about_me.html', **templateData)
 
 
