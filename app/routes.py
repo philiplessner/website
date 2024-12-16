@@ -3,8 +3,11 @@ from flask import render_template
 from sqlalchemy import func
 from app import app, db
 from app.models import Page, Image, Reference, Blog
+from flask import Blueprint
 
-@app.route("/")
+bp = Blueprint('views', __name__, url_prefix='/')
+
+@bp.route("/")
 def home():
     templateData = {
             'title': 'Home',
@@ -19,7 +22,7 @@ def home():
     return render_template('index.html', **templateData)
 
 
-@app.route("/blog")
+@bp.route("/blog")
 def blog():
     stmt = (db.select(Blog.title, Blog.abstract, Blog.date, Blog.medialink, Blog.mediatype, Blog.id)
                       .select_from(Blog))
@@ -39,7 +42,7 @@ def blog():
     return render_template('blog.html', **templateData)
 
 
-@app.route("/blog/<blogid>")
+@bp.route("/blog/<blogid>")
 def blogpost(blogid):
     stmt = (db.select(Blog.title, Blog.body, Blog.date, Blog.id)
                       .select_from(Blog)
@@ -49,7 +52,7 @@ def blogpost(blogid):
     return render_template('blogpost.html', **templateData)
 
 
-@app.route("/photos/<location>")
+@bp.route("/photos/<location>")
 def photos(location):
     '''
     cap_location(str): Page Name (first letter should be capitalized). This is used to look up
@@ -76,7 +79,7 @@ def photos(location):
     return render_template('photos_template.html', **templateData)
 
 
-@app.route("/aboutme")
+@bp.route("/aboutme")
 def about_me():
     templateData = {'title': 'About'}
     References = namedtuple('References', ['authors', 'title', 'reference', 'date', 'link', 'type'])

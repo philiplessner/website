@@ -21,7 +21,7 @@
                 <h4 class="card-title">{{ post[0] }}</h4>
                 <div class="mb-1 text-muted">{{ post[2] }}</div>
                 <p class="card-text">{{ post[1] | safe}}</p>
-                <a href="{{ url_for('blogpost', blogid=post[5]) }}">More...</a>
+                <a href="{{ url_for('views.blogpost', blogid=post[5]) }}">More...</a>
             </div>
           </div>
         </div>
