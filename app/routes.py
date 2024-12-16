@@ -1,7 +1,7 @@
 from collections import namedtuple
 from flask import render_template
 from sqlalchemy import func
-from app import app, db
+from app import db
 from app.models import Page, Image, Reference, Blog
 from flask import Blueprint
 
