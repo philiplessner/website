@@ -1,5 +1,4 @@
 from collections import namedtuple
-from pprint import pprint
 from flask import render_template
 from sqlalchemy import func
 from app import db
@@ -50,7 +49,6 @@ def blogpost(blogid):
                       .where(Blog.id == blogid))
     blog = db.session.execute(stmt).all()
     templateData = {"blogdata": blog}
-    pprint(templateData)
     return render_template('blogpost.html', **templateData)
 
 

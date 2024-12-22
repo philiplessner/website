@@ -26,7 +26,7 @@ def update(filename):
     path2body: Path to the filename_body.html file
     '''
     C = os.path.abspath(os.path.dirname(__file__))
-    path_to_db = "".join(["sqlite:///", C, "/app/db/website_test.db"])
+    path_to_db = "".join(["sqlite:///", C, "/app/db/website.db"])
     db = sa.create_engine(path_to_db)
     Base.metadata.create_all(db)
     yaml_file = "".join([filename, ".yaml"]) 

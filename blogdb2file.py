@@ -18,7 +18,7 @@ def db2file(filename, blogid):
     These files will be read by update_blogs.py to update the post in the database.
     '''
     C = os.path.abspath(os.path.dirname(__file__))
-    path_to_db = "".join(["sqlite:///", C, "/app/db/website_test.db"])
+    path_to_db = "".join(["sqlite:///", C, "/app/db/website.db"])
     db = sa.create_engine(path_to_db)
     Base.metadata.create_all(db)
     Session = sessionmaker(bind=db)
