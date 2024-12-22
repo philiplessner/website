@@ -1,4 +1,9 @@
 {% extends "base.html" %}
+{% block page_css %}
+{% if blogdata[0][4] %}
+    {{ blogdata[0][4] |safe }}
+{% endif %}
+{% endblock %}
 {% block content %}
     <div class="container">
         <h2>{{ blogdata[0][0] }}</h2>

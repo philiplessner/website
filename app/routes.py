@@ -1,4 +1,5 @@
 from collections import namedtuple
+from pprint import pprint
 from flask import render_template
 from sqlalchemy import func
 from app import db
@@ -34,7 +35,7 @@ def blog():
     for blog in blogs:
         row.append(blog)
         count = count + 1
-        if (count == 2):
+        if ((count == 2) or (blog == blogs[-1])):
             rows.append(row)
             row = []
             count = 0
@@ -44,11 +45,12 @@ def blog():
 
 @bp.route("/blog/<blogid>")
 def blogpost(blogid):
-    stmt = (db.select(Blog.title, Blog.body, Blog.date, Blog.id)
+    stmt = (db.select(Blog.title, Blog.body, Blog.date, Blog.id, Blog.pagecss)
                       .select_from(Blog)
                       .where(Blog.id == blogid))
     blog = db.session.execute(stmt).all()
     templateData = {"blogdata": blog}
+    pprint(templateData)
     return render_template('blogpost.html', **templateData)
 
 

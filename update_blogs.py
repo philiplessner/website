@@ -56,6 +56,7 @@ def update(filename):
             record.mediatype = data['mediatype']
             record.abstract = data['abstract']
             record.body = data['body']
+            record.pagecss = data.get('pagecss', None)
         else:
             data.pop("id")
             record = Blog(**data)
