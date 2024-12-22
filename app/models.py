@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
@@ -53,4 +53,4 @@ class Blog(Base):
     abstract: Mapped[str]
     medialink: Mapped[str]
     mediatype: Mapped[str]
-        
+    pagecss: Mapped[Optional[str]]
