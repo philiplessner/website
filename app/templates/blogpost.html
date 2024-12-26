@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 {% block page_css %}
-{% if blogdata[0][4] %}
-    {{ blogdata[0][4] |safe }}
+{% if blogdata[4] %}
+    {{ blogdata[4] |safe }}
 {% endif %}
 {% endblock %}
 {% block content %}
     <div class="container">
-        <h2>{{ blogdata[0][0] }}</h2>
-        <p>{{ blogdata[0][2] }}</p>
+        <h2>{{ blogdata[0] }}</h2>
+        <p>{{ blogdata[2] }}</p>
         <br>
-        <p> {{ blogdata[0][1] |safe }}</p>
+        <p> {{ blogdata[1] |safe }}</p>
     </div>
 
 

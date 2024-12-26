@@ -47,7 +47,7 @@ def blogpost(blogid):
     stmt = (db.select(Blog.title, Blog.body, Blog.date, Blog.id, Blog.pagecss)
                       .select_from(Blog)
                       .where(Blog.id == blogid))
-    blog = db.session.execute(stmt).all()
+    blog = db.session.execute(stmt).all()[0]
     templateData = {"blogdata": blog}
     return render_template('blogpost.html', **templateData)
 
