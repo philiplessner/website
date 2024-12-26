@@ -25,8 +25,9 @@ def home():
 @bp.route("/blog")
 def blog():
     stmt = (db.select(Blog.title, Blog.abstract, Blog.date, Blog.medialink, Blog.mediatype, Blog.id)
-                      .select_from(Blog))
-    blogs = sorted(db.session.execute(stmt).all() , key=lambda x: x[2], reverse=True)
+                      .select_from(Blog)
+                      .order_by(Blog.date.desc()))
+    blogs = db.session.execute(stmt).all()
     rows = list()
     row = list()
     count = 0
