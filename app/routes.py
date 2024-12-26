@@ -26,8 +26,7 @@ def home():
 def blog():
     stmt = (db.select(Blog.title, Blog.abstract, Blog.date, Blog.medialink, Blog.mediatype, Blog.id)
                       .select_from(Blog))
-    blogs = [row for row in db.session.execute(stmt).all()]
-    blogs = sorted(blogs, key=lambda x: x[2], reverse=True)
+    blogs = sorted(db.session.execute(stmt).all() , key=lambda x: x[2], reverse=True)
     rows = list()
     row = list()
     count = 0
