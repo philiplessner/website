@@ -89,9 +89,10 @@ def about_me():
                       Reference.refinfo, Reference.date,
                       Reference.reflink, Reference.reftype)
                       .select_from(Reference)
-                      .where(Reference.reftype == "Paper"))
+                      .where(Reference.reftype == "Paper")
+                      .order_by(Reference.date.desc()))
     papers = [References(*row) for row in db.session.execute(stmt).all()]
-    papers = sorted(papers, key=lambda x: x[3], reverse=True)
+#    papers = sorted(papers, key=lambda x: x[3], reverse=True)
     stmt = (db.select(Reference.authors, Reference.title,
                       Reference.refinfo, Reference.date,
                       Reference.reflink, Reference.reftype)
