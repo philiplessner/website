@@ -68,7 +68,7 @@ def photos(location):
     stmt = db.select(Page.pagetitle).where(Page.pagetitle==cap_location)
     templateData.update({"title": db.first_or_404(stmt)})
     stmt = db.select(func.max(Image.pagerow)).join(Page).where(Page.pagetitle==cap_location)
-    maxrows = db.session.execute(stmt).all()[0][0]
+    maxrows = db.session.scalar(stmt)
     for i in range(maxrows+1):
         stmt = (db.select(Image.imagelink, Image.imagetitle)
                 .select_from(Image)
