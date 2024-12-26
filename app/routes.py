@@ -44,10 +44,11 @@ def blog():
 
 @bp.route("/blog/<blogid>")
 def blogpost(blogid):
+    Post  = namedtuple('Post', ['title', 'body', 'date', 'id', 'pagecss'])
     stmt = (db.select(Blog.title, Blog.body, Blog.date, Blog.id, Blog.pagecss)
                       .select_from(Blog)
                       .where(Blog.id == blogid))
-    blog = db.session.execute(stmt).all()[0]
+    blog = Post(*(db.session.execute(stmt).all()[0]))
     templateData = {"blogdata": blog}
     return render_template('blogpost.html', **templateData)
 

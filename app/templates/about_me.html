@@ -22,14 +22,14 @@
                 {% if loop.first %}
                     <h2>Papers</h2>
                 {% endif %}
-                <p>  {{paper.authors}}  <a href= "{{paper.link }}">  {{paper.title }}</a>  {{paper.reference }}  
+                <p>  {{ paper.authors }}  <a href= "{{ paper.link }}">  {{ paper.title }}</a>  {{ paper.reference }}  
                 </p>
             {% endfor %}
             {% for patent in patents %}
                 {% if loop.first %}
                     <h2>Patents</h2>
                 {% endif %}
-                <p>  {{patent.authors}}  <a href= "{{patent.link }}">  {{patent.title }}</a>  {{ patent.reference }}  
+                <p>  {{ patent.authors }}  <a href= "{{ patent.link }}">  {{ patent.title }}</a>  {{ patent.reference }}  
                 </p>
             {% endfor %}
         </div>

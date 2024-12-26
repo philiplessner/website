@@ -1,15 +1,16 @@
 {% extends "base.html" %}
 {% block page_css %}
-{% if blogdata[4] %}
-    {{ blogdata[4] |safe }}
+{% if blogdata.pagecss %}
+    {{ blogdata.pagecss |safe }}
 {% endif %}
 {% endblock %}
 {% block content %}
     <div class="container">
-        <h2>{{ blogdata[0] }}</h2>
-        <p>{{ blogdata[2] }}</p>
+        <h2>{{ blogdata.title }}</h2>
+        <p>{{ blogdata.date }}</p>
+
         <br>
-        <p> {{ blogdata[1] |safe }}</p>
+        <p> {{ blogdata.body |safe }}</p>
     </div>
 
 
