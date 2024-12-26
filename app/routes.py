@@ -92,14 +92,13 @@ def about_me():
                       .where(Reference.reftype == "Paper")
                       .order_by(Reference.date.desc()))
     papers = [References(*row) for row in db.session.execute(stmt).all()]
-#    papers = sorted(papers, key=lambda x: x[3], reverse=True)
     stmt = (db.select(Reference.authors, Reference.title,
                       Reference.refinfo, Reference.date,
                       Reference.reflink, Reference.reftype)
                       .select_from(Reference)
-                      .where(Reference.reftype == "Patent"))
+                      .where(Reference.reftype == "Patent")
+                      .order_by(Reference.date.desc()))
     patents= [References(*row) for row in db.session.execute(stmt).all()]
-    patents = sorted(patents, key=lambda x: x[3], reverse=True)
     references.update({"papers": papers, "patents": patents})
     templateData.update(references)
     return render_template('about_me.html', **templateData)
