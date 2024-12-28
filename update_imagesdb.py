@@ -4,6 +4,7 @@ import os
 import csv
 from pathlib import PurePath
 from pprint import pprint
+import click
 import sqlalchemy as sa
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import select
@@ -12,28 +13,12 @@ from app.models import Base, Page, Image
 
 csvfile = sys.argv[1]
 
-def main(): 
-    '''
-    Connect to the images database.
-    Load the load the table classes.
-    Create a session.
-    ***Parameters***
-    None
-    ***Returns***
-    Session object.
-    '''
-    C = os.path.abspath(os.path.dirname(__file__))
-    path_to_db = "".join(["sqlite:///", C , "/app/db/website.db"])
-    print(path_to_db)
-    db = sa.create_engine(path_to_db)
-    Base.metadata.create_all(db)
-    Session = sessionmaker(bind=db)
-    return Session
 
-
-def csv2db(csvfile: str, Session) -> None:
+@click.command()
+@click.option('-f', 'csvfile')
+def csv2db(csvfile: str ) -> None:
     '''
-    Update the images database from a CSV file.
+    Update the website database from a CSV file.
     Name of CSV file is name of photos page (lower case).
     Each row of CSV file is: imagelink, imagetitle, imagerow, imagecolumn.
     A list of dicts is created from the rows of the CSV file:
@@ -46,6 +31,12 @@ def csv2db(csvfile: str, Session) -> None:
     ***Returns***
     None
     '''
+    C = os.path.abspath(os.path.dirname(__file__))
+    path_to_db = "".join(["sqlite:///", C , "/app/db/website.db"])
+    print(path_to_db)
+    db = sa.create_engine(path_to_db)
+    Base.metadata.create_all(db)
+    Session = sessionmaker(bind=db)
     rows = list()
     pagedict = dict()
     with open(csvfile, newline='') as f:
@@ -84,17 +75,6 @@ def csv2db(csvfile: str, Session) -> None:
         session.commit()
 
 
-def print_database(Session) -> None:
-    with Session() as session:
-        stmt = (select(Image.imagelink, Image.imagetitle,
-                      Image.pagerow, Image.pagecolumn,
-                      Image.page_id, Page.pagetitle)
-                      .select_from(Image)
-                      .join(Page, Image.page_id==Page.id))
-        pprint(session.execute(stmt).all())
-
 
 if __name__ == "__main__":
-    Session = main()
-    csv2db(csvfile, Session)
-    print_database(Session)
+    csv2db()
