@@ -17,6 +17,9 @@ class Page(Base):
     pageroute: Mapped[str]
     images: Mapped[List["Image"]] = relationship(back_populates="pages")
 
+    def __repr__(self) -> str:
+        return f"<Page(id={self.id}, pagetitle={self.pagetitle}, pageroute={self.pageroute})>"
+
 
 class Image(Base):
     __tablename__ = "images_table"
@@ -30,7 +33,7 @@ class Image(Base):
     pages: Mapped["Page"] = relationship(back_populates="images")
 
     def __repr__(self) -> str:
-        return f"<Image(id={self.id},imagelink={self.imagelink},imagetitle={self.imagetitle},pagerow={self.pagerow},pagecolumn={self.pagecolumn})>"
+        return f"<Image(id={self.id}, imagelink={self.imagelink}, imagetitle={self.imagetitle}, pagerow={self.pagerow}, pagecolumn={self.pagecolumn})>"
     
 
 class Reference(Base):
@@ -43,6 +46,9 @@ class Reference(Base):
     reflink: Mapped[str]
     reftype: Mapped[str]
 
+    def __repr__(self) -> str:
+        return f"<Reference(id={self.id}, authors={self.authors}, title={self.title}, refinfo={self.refinfo}, reflink={self.reflink}, date={self.date}, reftype={self.reftype})>"
+
 
 class Blog(Base):
     __tablename__ = "blogs_table"
@@ -54,3 +60,6 @@ class Blog(Base):
     medialink: Mapped[str]
     mediatype: Mapped[str]
     pagecss: Mapped[Optional[str]]
+
+    def __repr__(self) -> str:
+        return f"<Blog(id={self.id}, title={self.title}, date={self.date})>"
