@@ -1,5 +1,4 @@
 #!/bin/env python3
-import sys
 import os
 import csv
 from pathlib import PurePath
@@ -28,10 +27,10 @@ def csv2db(csvfile: str ) -> None:
     ***Returns***
     None
     '''
-    C = os.path.abspath(os.path.dirname(__file__))
-    path_to_db = "".join(["sqlite:///", C , "/app/db/website.db"])
-    print(path_to_db)
-    db = sa.create_engine(path_to_db)
+    path2this_directory = os.path.abspath(os.path.dirname(__file__))
+    path2db = f"sqlite:///{os.path.join(path2this_directory, 'app/db/website.db')}"
+    print(f"The database is located at: {path2db}")
+    db = sa.create_engine(path2db)
     Base.metadata.create_all(db)
     Session = sessionmaker(bind=db)
     rows = list()
@@ -49,11 +48,12 @@ def csv2db(csvfile: str ) -> None:
     pagedict.update({"pagetitle": title, "pageroute": route})
 
     with Session() as session:
-        q = session.query(Page.id).filter(Page.pagetitle==pagedict["pagetitle"])
-        result = session.query(q.exists()).scalar()    # returns True or False
-        print(result)
+        stmt = select(Page.id).where(Page.pagetitle==pagedict["pagetitle"])
+        result = session.scalar(stmt)  # Returns None if page is not in database
+        print(f"The Page id is: {result}")
         if (not result):
             page = Page(**pagedict)
+            print(page)
             session.add(page)
             session.commit()
             for row in rows:
