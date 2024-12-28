@@ -11,9 +11,6 @@ from sqlalchemy.sql import select
 from app.models import Base, Page, Image
 
 
-csvfile = sys.argv[1]
-
-
 @click.command()
 @click.option('-f', 'csvfile')
 def csv2db(csvfile: str ) -> None:
