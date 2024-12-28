@@ -53,24 +53,23 @@ def csv2db(csvfile: str ) -> None:
         print(f"The Page id is: {result}")
         if (not result):
             page = Page(**pagedict)
-            print(page)
+            print(f"The new page id is :{page} for {pagedict['pagetitle']}")
             session.add(page)
             session.commit()
             for row in rows:
                 image = Image(**row)
                 image.pages = page
                 session.add(image)
+                pprint(image, width=1)
         else:
-            stmt = select(Page.id).where(Page.pagetitle==pagedict["pagetitle"])
-            page = session.execute(stmt).scalar()
-            print(page)
+            page = result
             for row in rows:
                 row.update({"page_id": page})
                 image = Image(**row)
                 session.add(image)
+                pprint(image, width=1)
 
         session.commit()
-
 
 
 if __name__ == "__main__":
