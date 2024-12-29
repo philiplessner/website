@@ -12,7 +12,8 @@ from app.models import Base, Page, Image
 
 @click.command()
 @click.option('-f', 'csvfile')
-def csv2db(csvfile: str ) -> None:
+@click.option('-d', 'dbfile')
+def csv2db(csvfile: str, dbfile: str ) -> None:
     '''
     Update the website database from a CSV file.
     Name of CSV file is name of photos page (lower case).
@@ -28,7 +29,7 @@ def csv2db(csvfile: str ) -> None:
     None
     '''
     path2this_directory = os.path.abspath(os.path.dirname(__file__))
-    path2db = f"sqlite:///{os.path.join(path2this_directory, 'app/db/website.db')}"
+    path2db = f"sqlite:///{os.path.join(path2this_directory, 'app/db',dbfile)}"
     print(f"The database is located at: {path2db}")
     db = sa.create_engine(path2db)
     Base.metadata.create_all(db)
@@ -53,23 +54,24 @@ def csv2db(csvfile: str ) -> None:
         print(f"The Page id is: {result}")
         if (not result):
             page = Page(**pagedict)
-            print(f"The new page id is :{page} for {pagedict['pagetitle']}")
             session.add(page)
             session.commit()
+            stmt = select(Page).order_by(Page.id.desc()).limit(1)
+            print(f"The new Page Record is: {session.execute(stmt).all()}")
             for row in rows:
                 image = Image(**row)
                 image.pages = page
                 session.add(image)
-                pprint(image, width=1)
         else:
             page = result
             for row in rows:
                 row.update({"page_id": page})
                 image = Image(**row)
                 session.add(image)
-                pprint(image, width=1)
 
         session.commit()
+        stmt = select(Image).order_by(Image.id.desc()).limit(len(rows))
+        pprint(session.execute(stmt).all())
 
 
 if __name__ == "__main__":
