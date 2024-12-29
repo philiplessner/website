@@ -15,7 +15,7 @@ from app.models import Base, Page, Image
 @click.option('-d', 'dbfile')
 def csv2db(csvfile: str, dbfile: str ) -> None:
     '''
-    Update the website database from a CSV file.
+    Update the Images and Pages table in database from a CSV file.
     Name of CSV file is name of photos page (lower case).
     Each row of CSV file is: imagelink, imagetitle, imagerow, imagecolumn.
     A list of dicts is created from the rows of the CSV file:
@@ -24,14 +24,18 @@ def csv2db(csvfile: str, dbfile: str ) -> None:
     {"pagetitle":title, "pageroute":route}
     ***Parameters***
     csvfile: path to csvfile
-    Session: Session object created in main()
+    dbfile: name of db file (stored in app/db directory) or "memory" to use an in-memory database for testing
     ***Returns***
     None
     '''
-    path2this_directory = os.path.abspath(os.path.dirname(__file__))
-    path2db = f"sqlite:///{os.path.join(path2this_directory, 'app/db',dbfile)}"
-    print(f"The database is located at: {path2db}")
-    db = sa.create_engine(path2db)
+    if (dbfile == 'memory'):
+        db = sa.create_engine("sqlite://")
+        print("The database is an in-memory database")
+    else:
+        path2this_directory = os.path.abspath(os.path.dirname(__file__))
+        path2db = f"sqlite:///{os.path.join(path2this_directory, 'app/db',dbfile)}"
+        print(f"The database is located at: {path2db}")
+        db = sa.create_engine(path2db)
     Base.metadata.create_all(db)
     Session = sessionmaker(bind=db)
     rows = list()
