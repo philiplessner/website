@@ -103,7 +103,7 @@ def about_me():
     templateData.update(references)
     return render_template('about_me.html', **templateData)
 
-@bp.route("/files/<path:filename>")
+@bp.route("/resume/<path:filename>")
 def download_resume(filename):
     return(send_from_directory("files", filename))
 
