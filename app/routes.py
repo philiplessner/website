@@ -1,5 +1,5 @@
 from collections import namedtuple
-from flask import render_template
+from flask import render_template, send_from_directory
 from sqlalchemy import func
 from app import db
 from app.models import Page, Image, Reference, Blog
@@ -102,3 +102,8 @@ def about_me():
     references.update({"papers": papers, "patents": patents})
     templateData.update(references)
     return render_template('about_me.html', **templateData)
+
+@bp.route("/files/<path:filename>")
+def download_resume(filename):
+    return(send_from_directory("files", filename))
+
