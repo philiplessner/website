@@ -99,7 +99,14 @@ def about_me():
                       .where(Reference.reftype == "Patent")
                       .order_by(Reference.date.desc()))
     patents= [References(*row) for row in db.session.execute(stmt).all()]
-    references.update({"papers": papers, "patents": patents})
+    stmt = (db.select(Reference.authors, Reference.title,
+                      Reference.refinfo, Reference.date,
+                      Reference.reflink, Reference.reftype)
+                      .select_from(Reference)
+                      .where(Reference.reftype == "Presentation")
+                      .order_by(Reference.date.desc()))
+    presentations = [References(*row) for row in db.session.execute(stmt).all()]
+    references.update({"papers": papers, "patents": patents, "presentations": presentations})
     templateData.update(references)
     return render_template('about_me.html', **templateData)
 

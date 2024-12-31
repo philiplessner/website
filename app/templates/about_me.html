@@ -28,6 +28,13 @@
                 <p>  {{ paper.authors }}  <a href= "{{ paper.link }}">  {{ paper.title }}</a>  {{ paper.reference }}  
                 </p>
             {% endfor %}
+            {% for presentation in presentations%}
+                {% if loop.first %}
+                    <h2>Presentations</h2>
+                {% endif %}
+                <p>  {{ presentation.authors }}  <a href= "{{presentation.link }}">  {{presentation.title }}</a>  {{presentation.reference }}  
+                </p>
+            {% endfor %}
             {% for patent in patents %}
                 {% if loop.first %}
                     <h2>Patents</h2>

@@ -1,36 +1,28 @@
 #!/bin/env python3
-import sys
 import os
 import csv
 from pprint import pprint
+import click
 import sqlalchemy as sa
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import select
-from app.models import Base, Page, Image, Reference
+from app.models import Base, Reference
 
 
-csvfile = sys.argv[1]
-
-def main(): 
-    '''
-    Connect to the images database.
-    Load the load the table classes.
-    Create a session.
-    ***Parameters***
-    None
-    ***Returns***
-    Session object.
-    '''
-    C = os.path.abspath(os.path.dirname(__file__))
-    path_to_db = "".join(["sqlite:///", C, "/app/db/website.db"])
-    print(path_to_db)
-    db = sa.create_engine(path_to_db)
+@click.command()
+@click.option('-f', 'csvfile')
+@click.option('-d', 'dbfile')
+def csv2db(csvfile: str, dbfile: str) -> None:
+    if (dbfile == 'memory'):
+        db = sa.create_engine("sqlite://")
+        print("The database is an in-memory database")
+    else:
+        path2this_directory = os.path.abspath(os.path.dirname(__file__))
+        path2db = f"sqlite:///{os.path.join(path2this_directory, 'app/db',dbfile)}"
+        print(f"The database is located at: {path2db}")
+        db = sa.create_engine(path2db)
     Base.metadata.create_all(db)
     Session = sessionmaker(bind=db)
-    return Session
-
-
-def csv2db(csvfile: str, Session) -> None:
     with open(csvfile, newline='') as f:
         reader = csv.DictReader(f, delimiter=',')
         rows = [row for row in reader]
@@ -39,19 +31,9 @@ def csv2db(csvfile: str, Session) -> None:
             reference = Reference(**row)
             session.add(reference)
         session.commit()
-
-
-def print_database(Session) -> None:
-    with Session() as session:
-        stmt = (select(Reference.authors, Reference.title,
-                       Reference.refinfo, Reference.reflink,
-                       Reference.date, Reference.reftype)
-                      .select_from(Reference)
-                      )
+        stmt = select(Reference).order_by(Reference.id.desc()).limit(len(rows))
         pprint(session.execute(stmt).all())
 
 
 if __name__ == "__main__":
-    Session = main()
-    csv2db(csvfile, Session)
-    print_database(Session)
+    csv2db()
