@@ -1,16 +1,22 @@
+#!/bin/env python3
 import os
 import yaml
 import click
-from pprint import pprint
 import sqlalchemy as sa
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import select
 from app.models import Base, Blog
 
 
+@click.group()
+def blog_cli():
+    pass
+
+
 @click.command()
-@click.option('-f', 'filename')
-def update(filename):
+@click.argument('filename')
+@click.option('-d', 'dbfile')
+def update(filename: str, dbfile: str):
     '''
     Update a blog entry or create a record with a new blog entry.
     Reads from three files:
@@ -25,12 +31,13 @@ def update(filename):
     path2abstract: Path to the filename_abstract.html file
     path2body: Path to the filename_body.html file
     '''
-    C = os.path.abspath(os.path.dirname(__file__))
-    path_to_db = "".join(["sqlite:///", C, "/app/db/website.db"])
-    db = sa.create_engine(path_to_db)
+    path2this_directory = os.path.abspath(os.path.dirname(__file__))
+    path2db = f"sqlite:///{os.path.join(path2this_directory, 'app/db',dbfile)}"
+    print(f"The database is located at: {path2db}")
+    db = sa.create_engine(path2db)
     Base.metadata.create_all(db)
     yaml_file = "".join([filename, ".yaml"]) 
-    print(yaml_file)
+    print(f"Reading data from: {yaml_file}")
     with open(yaml_file, "r") as f:
         data = yaml.safe_load(f)
     body_file = data['path2body']
@@ -43,13 +50,11 @@ def update(filename):
         abstract = f.read()
     data.update({"abstract": abstract})
     data.pop("path2abstract")
-    pprint(data)
     Session = sessionmaker(bind=db)
     with Session() as session:
         if (data['id'] >= 0):
             stmt = select(Blog).where(Blog.id==data['id'])
             record = session.execute(stmt).scalar_one()
-            print(record)
             record.title = data['title']
             record.date = data['date']
             record.medialink = data['medialink']
@@ -62,6 +67,11 @@ def update(filename):
             record = Blog(**data)
             session.add(record)
         session.commit()
+        print(f"The Blog Entry: {record}")
+
+
+blog_cli.add_command(update)
+
 
 if __name__ == "__main__":
-    update()
+    blog_cli()
