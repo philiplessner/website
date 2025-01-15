@@ -16,7 +16,7 @@ def blog_cli():
 @click.command()
 @click.argument('filename')
 @click.option('-d', 'dbfile')
-def update(filename: str, dbfile: str):
+def upload (filename: str, dbfile: str):
     '''
     Update a blog entry or create a record with a new blog entry.
     Reads from three files:
@@ -70,7 +70,41 @@ def update(filename: str, dbfile: str):
         print(f"The Blog Entry: {record}")
 
 
-blog_cli.add_command(update)
+@click.command()
+@click.option('-i', 'id', type=int)
+@click.option('-d', 'dbfile')
+def download(id: int, dbfile: str):
+    path2this_directory = os.path.abspath(os.path.dirname(__file__))
+    path2db = f"sqlite:///{os.path.join(path2this_directory, 'app/db',dbfile)}"
+    print(f"The database is located at: {path2db}")
+    db = sa.create_engine(path2db)
+    Base.metadata.create_all(db)
+    Session = sessionmaker(bind=db)
+    with Session() as session:
+            stmt = select(Blog).where(Blog.id==id)
+            record = session.execute(stmt).scalar_one_or_none()
+    if record:
+        yaml_data = dict()
+        yaml_data['id'] = record.id
+        yaml_data['title'] = record.title
+        yaml_data['date'] = record.date
+        yaml_data['mediatype'] = record.mediatype
+        yaml_data['medialink'] = record.medialink
+        yaml_data['pagecss'] = record.pagecss
+        yaml_data['path2abstract']  = ''.join(['/media/phil/m2ssd/web/website/data/', str(id), '_abstract.html'])
+        yaml_data['path2body']  = ''.join(['/media/phil/m2ssd/web/website/data/', str(id), '_body.html'])
+        with open(''.join(['/media/phil/m2ssd/web/website/data/', str(id), '.yaml']), 'w') as yaml_file:
+            yaml.dump(yaml_data, yaml_file)
+        with open(yaml_data['path2abstract'], 'w', encoding='utf-8') as abstract_file:
+            abstract_file.write(record.abstract)
+        with open(yaml_data['path2body'], 'w', encoding='utf-8') as body_file:
+            body_file.write(record.body)
+    else:
+        print(f"id: {id} is not in database")
+
+
+blog_cli.add_command(upload)
+blog_cli.add_command(download)
 
 
 if __name__ == "__main__":
