@@ -90,11 +90,11 @@ def download(id: int, dbfile: str):
         yaml_data['date'] = record.date
         yaml_data['mediatype'] = record.mediatype
         yaml_data['medialink'] = record.medialink
-        yaml_data['pagecss'] = record.pagecss
         yaml_data['path2abstract']  = ''.join(['/media/phil/m2ssd/web/website/data/', str(id), '_abstract.html'])
         yaml_data['path2body']  = ''.join(['/media/phil/m2ssd/web/website/data/', str(id), '_body.html'])
-        with open(''.join(['/media/phil/m2ssd/web/website/data/', str(id), '.yaml']), 'w') as yaml_file:
-            yaml.dump(yaml_data, yaml_file)
+        yaml_data['pagecss'] = record.pagecss
+        with open(''.join(['/media/phil/m2ssd/web/website/data/', str(id), '.yaml']), 'w', encoding='utf-8') as yaml_file:
+            yaml.dump(yaml_data, yaml_file, sort_keys=False)
         with open(yaml_data['path2abstract'], 'w', encoding='utf-8') as abstract_file:
             abstract_file.write(record.abstract)
         with open(yaml_data['path2body'], 'w', encoding='utf-8') as body_file:
