@@ -23,6 +23,7 @@ def home():
 
 
 @bp.route('/robots.txt')
+@bp.route('/site.webmanifest')
 def static_from_root():
     return send_from_directory(bp.static_folder, request.path[1:])
 
