@@ -26,6 +26,10 @@ def home():
 def searchengine(filename):
     return send_from_directory('static', filename)
 
+@bp.route("/favicon.ico")
+def favicon():
+    return send_from_directory('static/images/', 'favicon.ico')
+
 
 @bp.route("/blog")
 def blog():
