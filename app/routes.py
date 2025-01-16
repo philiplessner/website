@@ -1,5 +1,5 @@
 from collections import namedtuple
-from flask import render_template, send_from_directory
+from flask import render_template, send_from_directory, request
 from sqlalchemy import func
 from app import db
 from app.models import Page, Image, Reference, Blog
@@ -22,6 +22,11 @@ def home():
     return render_template('index.html', **templateData)
 
 
+@bp.route('/robots.txt')
+def static_from_root():
+    return send_from_directory(bp.static_folder, request.path[1:])
+
+
 @bp.route("/blog")
 def blog():
     stmt = (db.select(Blog.title, Blog.abstract, Blog.date, Blog.medialink, Blog.mediatype, Blog.id)
@@ -39,6 +44,7 @@ def blog():
             row = []
             count = 0
     templateData = {"rows": rows}
+    templateData['title'] = "Blog"
     return render_template('blog.html', **templateData)
 
 
@@ -50,6 +56,7 @@ def blogpost(blogid):
                       .where(Blog.id == blogid))
     blog = Post(*(db.session.execute(stmt).all()[0]))
     templateData = {"blogdata": blog}
+    templateData['title'] = "Blog"
     return render_template('blogpost.html', **templateData)
 
 
