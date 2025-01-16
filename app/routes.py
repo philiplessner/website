@@ -1,5 +1,5 @@
 from collections import namedtuple
-from flask import render_template, send_from_directory
+from flask import render_template, send_from_directory, request
 from sqlalchemy import func
 from app import db
 from app.models import Page, Image, Reference, Blog
@@ -20,6 +20,11 @@ def home():
             ("https://lh3.googleusercontent.com/BSZCcP7yCA28fXsAlVaL0xg7BmHGknBqfT2qDDi8x6zCtadnuRgdM7xylHaiwOGM0QWiDlJRJonCw0LnUFUcQBAqlMwAuu60zLoAxfH-867jzPYMKmR0CLS-4Xd4eGExdvvI245m7w=w2400", "Frigatebird in Galapagos")]
             }
     return render_template('index.html', **templateData)
+
+
+@bp.route('/robots.txt')
+def static_from_root():
+    return send_from_directory(bp.static_folder, request.path[1:])
 
 
 @bp.route("/blog")
