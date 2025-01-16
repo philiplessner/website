@@ -39,6 +39,7 @@ def blog():
             row = []
             count = 0
     templateData = {"rows": rows}
+    templateData['title'] = "Blog"
     return render_template('blog.html', **templateData)
 
 
@@ -50,6 +51,7 @@ def blogpost(blogid):
                       .where(Blog.id == blogid))
     blog = Post(*(db.session.execute(stmt).all()[0]))
     templateData = {"blogdata": blog}
+    templateData['title'] = "Blog"
     return render_template('blogpost.html', **templateData)
 
 
