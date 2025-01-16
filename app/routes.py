@@ -1,5 +1,5 @@
 from collections import namedtuple
-from flask import render_template, send_from_directory, request
+from flask import render_template, send_from_directory
 from sqlalchemy import func
 from app import db
 from app.models import Page, Image, Reference, Blog
@@ -22,14 +22,9 @@ def home():
     return render_template('index.html', **templateData)
 
 
-@bp.route('/site.webmanifest')
-def webmanifest():
-    return send_from_directory('static', 'site.webmanifest')
-
-
-@bp.route('/robots.txt')
-def robots():
-    return send_from_directory('static', 'robots.txt')
+@bp.route('/<path:filename>')
+def searchengine(filename):
+    return send_from_directory('static', filename)
 
 
 @bp.route("/blog")
