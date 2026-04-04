@@ -48,7 +48,8 @@ def csv2db(csvfile: str, dbfile: str ) -> None:
             rows.append(row)
 
     p = PurePath(csvfile)
-    title = p.stem.capitalize()
+#    title = p.stem.capitalize()
+    title = p.stem.title()
     route = "".join(["/photos/",p.stem])
     pagedict.update({"pagetitle": title, "pageroute": route})
 

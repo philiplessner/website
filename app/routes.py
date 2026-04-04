@@ -73,7 +73,8 @@ def photos(location):
                                      rows:[[(imagelink, imagetitle ), ...], [(imagelink, imagetitle), ...]]}
     Each entry is a tuple. Each row is a list of tuples. The complete structure is a list of lists.
     '''
-    cap_location = location.capitalize()
+#    cap_location = location.capitalize()
+    cap_location = location.title()
     templateData = dict()
     rows = list()
     stmt = db.select(Page.pagetitle).where(Page.pagetitle==cap_location)
