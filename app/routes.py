@@ -82,7 +82,7 @@ def photos(location):
     stmt = db.select(func.max(Image.pagerow)).join(Page).where(Page.pagetitle==cap_location)
     maxrows = db.session.scalar(stmt)
     for i in range(maxrows+1):
-        stmt = (db.select(Image.imagelink, Image.imagetitle)
+        stmt = (db.select(Image.imagelink, Image.imagetitle, Image.mediatype)
                 .select_from(Image)
                 .join(Page, Image.page_id==Page.id)
                 .where(Page.pagetitle==cap_location)
