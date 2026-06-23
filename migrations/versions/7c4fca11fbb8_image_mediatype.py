@@ -33,7 +33,7 @@ def upgrade():
                existing_nullable=True)
 
     with op.batch_alter_table('images_table', schema=None) as batch_op:
-        batch_op.add_column(sa.Column('mediatype', sa.String(), nullable=False))
+        batch_op.add_column(sa.Column('mediatype', sa.String(), nullable=True))
 
     # ### end Alembic commands ###
 
