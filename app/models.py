@@ -27,6 +27,7 @@ class Image(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     imagelink: Mapped[str]
     imagetitle: Mapped[str]
+    mediatype: Mapped[str]
     pagerow: Mapped[int]
     pagecolumn: Mapped[int]
     page_id: Mapped[int] = mapped_column(ForeignKey("pages_table.id"))
