@@ -6,12 +6,21 @@
         {% for row in rows %}
             <div class="row justify-content-center">
                 {% for link, caption, type in row %}
-                <div class="col-4 position-relative">
-                    <figure class="figure">
-                        <img src= "{{ link  }}" class="figure-img img-fluid rounded-0" loading="lazy" alt="{{ caption }}">
-                        <figcaption class="figure-caption">{{ caption }}</figcaption>
-                    </figure>
+                    <div class="col-4 position-relative">
+                        {% if type == 'image'%}
+                            <figure class="figure">
+                                <img src= "{{ link  }}" class="figure-img img-fluid rounded-0" loading="lazy" alt="{{ caption }}">
+                                <figcaption class="figure-caption">{{ caption }}</figcaption>
+                             </figure>
                         <a href = "{{ link }}" target="_blank" rel="noopener noreferrer" class="stretched-link"></a>
+                        {% else %}
+                             <div class="ratio ratio-16x9">
+                            <iframe width="560" height="315" src="{{ link }}" 
+                            title="YouTube video player" frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+                            </iframe>
+                            </div>
+                        {% endif %}
                 </div>
                 {% endfor %}
             </div>
