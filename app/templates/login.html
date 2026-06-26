@@ -12,24 +12,19 @@
 {% endif %}
 {% endwith %}
         <form method="POST" action="/login">
-            <div class="field">
-                <div class="control">
-                    <input class="input is-large" type="email" name="email" placeholder="Your Email" autofocus="">
-                </div>
+            <div class="mb-3">
+                <label for="LoginEmail" class="form-label">Email Address</label>
+               <input class="form-control" type="email" name="email" id="LoginEmail" aria-describedby="emailHelp" placeholder="Your Email" autofocus="">
             </div>
-
-            <div class="field">
-                <div class="control">
-                    <input class="input is-large" type="password" name="password" placeholder="Your Password">
-                </div>
+            <div class="mb-3">
+                <label for="LoginPassword" class="form-label">Password</label>
+                <input class="form-control" type="password" name="password" id="LoginPassword" placeholder="Your Password">
             </div>
-            <div class="field">
-                <label class="checkbox">
-                    <input type="checkbox" name="remember">
-                    Remember me
-                </label>
+            <div class="mb-3 form-check">
+                <label class="form-check-label" for="LoginRemember">Remember me</label>
+                <input type="checkbox" class="form-check-input" id="LoginRemember" name="remember">
             </div>
-            <button class="button is-block is-info is-large is-fullwidth">Login</button>
+            <button type="submit" class="btn btn-primary">Login</button>
         </form>
     </div>
 </div>
