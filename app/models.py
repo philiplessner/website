@@ -67,7 +67,7 @@ class Blog(Base):
         return f"<Blog(id={self.id}, title={self.title}, date={self.date})>"
 
 
-class User(UserMixin, Base):
+class User(Base, UserMixin):
     __tablename__ = "users_table"
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str]
