@@ -21,8 +21,8 @@ def create_app():
     from .models import User
     @login_manager.user_loader
     def load_user(user_id):
-        stmt = (db.select(User).select_from(User).where(User.id==int(user_id)))
-        user = db.session.execute(stmt).all()
+        stmt = db.select(User).where(User.id == int(user_id))
+        user = db.session.scalars(stmt).first()
         return user
      #   return User.query.get(int(user_id))
     
