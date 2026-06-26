@@ -3,6 +3,7 @@ from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.orm import relationship
+from flask_login import UserMixin
 
 
 class Base(DeclarativeBase):
@@ -64,3 +65,14 @@ class Blog(Base):
 
     def __repr__(self) -> str:
         return f"<Blog(id={self.id}, title={self.title}, date={self.date})>"
+
+
+class User(UserMixin, Base):
+    __tablename__ = "users_table"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    email: Mapped[str]
+    password_hash: Mapped[str]
+    name: Mapped[str]
+
+    def __repr__(self) -> str:
+        return f"<User(id={self.id}, email={self.email}, name={self.name})>"
