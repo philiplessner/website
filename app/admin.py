@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.models import User
 from . import db
@@ -62,4 +62,7 @@ def logout():
 
 @admin.route('/profile')
 def profile():
-    return "Hello"
+    if not current_user.is_authenticated:
+        return redirect(url_for('admin.login'))
+
+    return render_template('profile.html', name=current_user.name)
