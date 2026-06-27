@@ -1,15 +1,18 @@
+import os
+from dotenv import load_dotenv
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from app.models import Base
 
 db = SQLAlchemy(model_class=Base)
+load_dotenv()
 
 
 def create_app():
     app = Flask(__name__)
     from app import routes, models
-    app.config['SECRET_KEY'] = 'your-secret-key-change-in-production'
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'backup-secret-key')
     app.register_blueprint(routes.bp)
 
     # Configure Flask-Login

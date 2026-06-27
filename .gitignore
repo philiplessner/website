@@ -6,3 +6,4 @@ data/
 scripts/credentials.json
 scripts/token.json
 scripts/links.txt
+.env
