@@ -6,7 +6,8 @@ from flask_login import LoginManager
 from app.models import Base
 
 db = SQLAlchemy(model_class=Base)
-load_dotenv()
+if (os.environ.get('SECRET_KEY') is None):
+    load_dotenv()
 
 
 def create_app():
