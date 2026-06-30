@@ -16,8 +16,6 @@ def login_post():
     password = request.form.get('password')
     remember = True if request.form.get('remember') else False
 
- #   user = User.query.filter_by(email=email).first()
-
     stmt = db.select(User).where(User.email == email)
     user = db.session.scalars(stmt).first()
 
@@ -29,7 +27,10 @@ def login_post():
     return redirect(url_for('admin.profile'))
 
 @admin.route('/signup')
+@login_required
 def signup():
+    if not current_user.is_authenticated:
+        return redirect(url_for('admin.login'))
     return render_template('signup.html')
 
 @admin.route('/signup', methods=['POST'])
@@ -38,7 +39,6 @@ def signup_post():
     name = request.form.get('name')
     password = request.form.get('password')
 
-   # user = User.query.filter_by(email=email).first()
     stmt = (db.select(User.email)
             .select_from(User)
             .where(User.email==email))
