@@ -36,14 +36,10 @@ def signup():
 
 @admin.route('/signup', methods=['POST'])
 def signup_post():
-    #email = request.form.get('email')
-    #name = request.form.get('name')
-    #password = request.form.get('password')
     form = SignupForm()
-    stmt = (db.select(User.email)
-            .select_from(User)
-            .where(User.email==form.email.data))
-    user = db.session.execute(stmt).first()
+    if form.validate_on_submit():
+        stmt = db.select(User).where(User.email == form.email.data)
+        user = db.session.scalars(stmt).first()
 
     if user:
         flash('Email address already exists')
