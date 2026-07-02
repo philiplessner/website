@@ -3,12 +3,14 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.models import User
 from . import db
+from .forms import LoginForm
 
 admin = Blueprint('admin', __name__)
 
 @admin.route('/login')
 def login():
-    return render_template('login.html')
+    form = LoginForm()
+    return render_template('login2.html', form=form)
 
 @admin.route('/login', methods=['POST'])
 def login_post():

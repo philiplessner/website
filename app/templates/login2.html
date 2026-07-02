@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h3 class="title">Login</h3>
+
+<div class="row">
+    <div class="col-4 position-relative mb-4">
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>{{ messages[0] }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
+    </div>
+    {% endif %}
+{% endwith %}
+        <form method="POST" action="/login" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+                {{ form.email.label }}<br>
+                {{ form.email(size=32) }}
+            </div>
+            <div class="mb-3">
+                {{ form.password.label }}<br>
+                {{ form.password(size=32) }}
+            </div>
+            <div class="mb-3 form-check">
+                {{ form.remember_me() }} {{ form.remember_me.label }}
+            </div>
+            {{ form.submit() }}
+        </form>
+        </div>
+        </div>
+    </div>
+{% endblock %}
