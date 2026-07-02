@@ -14,18 +14,19 @@ def login():
 
 @admin.route('/login', methods=['POST'])
 def login_post():
-    email = request.form.get('email')
-    password = request.form.get('password')
-    remember = True if request.form.get('remember') else False
+   # email = request.form.get('email')
+    # password = request.form.get('password')
+    # remember = True if request.form.get('remember') else False
+    form = LoginForm()
+    if form.validate_on_submit():
+        stmt = db.select(User).where(User.email == form.email.data)
+        user = db.session.scalars(stmt).first()
 
-    stmt = db.select(User).where(User.email == email)
-    user = db.session.scalars(stmt).first()
-
-    if not user or not check_password_hash(user.password_hash, password):
+    if not user or not check_password_hash(user.password_hash, form.password.data):
         flash('Please check your login details and try again.')
         return redirect(url_for('admin.login'))
 
-    login_user(user, remember=remember)
+    login_user(user, remember=form.remember_me.data)
     return redirect(url_for('admin.profile'))
 
 @admin.route('/signup')
