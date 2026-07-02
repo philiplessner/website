@@ -14,9 +14,6 @@ def login():
 
 @admin.route('/login', methods=['POST'])
 def login_post():
-   # email = request.form.get('email')
-    # password = request.form.get('password')
-    # remember = True if request.form.get('remember') else False
     form = LoginForm()
     if form.validate_on_submit():
         stmt = db.select(User).where(User.email == form.email.data)
@@ -39,20 +36,20 @@ def signup():
 
 @admin.route('/signup', methods=['POST'])
 def signup_post():
-    email = request.form.get('email')
-    name = request.form.get('name')
-    password = request.form.get('password')
-
+    #email = request.form.get('email')
+    #name = request.form.get('name')
+    #password = request.form.get('password')
+    form = SignupForm()
     stmt = (db.select(User.email)
             .select_from(User)
-            .where(User.email==email))
+            .where(User.email==form.email.data))
     user = db.session.execute(stmt).first()
 
     if user:
         flash('Email address already exists')
         return redirect(url_for('admin.login'))
 
-    new_user = User(email=email, name=name, password_hash=generate_password_hash(password))
+    new_user = User(email=form.email.data, name=form.name.data, password_hash=generate_password_hash(form.password.data))
     db.session.add(new_user)
     db.session.commit()
 
