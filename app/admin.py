@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.models import User
 from . import db
-from .forms import LoginForm
+from .forms import LoginForm, SignupForm
 
 admin = Blueprint('admin', __name__)
 
@@ -31,9 +31,10 @@ def login_post():
 @admin.route('/signup')
 @login_required
 def signup():
+    form = SignupForm()
     if not current_user.is_authenticated:
         return redirect(url_for('admin.login'))
-    return render_template('signup.html')
+    return render_template('signup2.html', form=form)
 
 @admin.route('/signup', methods=['POST'])
 def signup_post():
