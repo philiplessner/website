@@ -13,21 +13,21 @@
     </div>
 {% endif %}
 {% endwith %}
-<form method="POST" action="/signup">
-        <form method="POST" action="/signup">
+        <form method="POST" action="/signup" novalidate>
+            {{ form.hidden_tag() }}
             <div class="mb-3">
-                <label for="SignupEmail" class="form-label">Email Address</label>
-                <input class="form-control" type="email" name="email" aria-describedby="emailHelp" placeholder="Your Email" autofocus="">
+                {{ form.email.label(class='form-label') }}<br>
+                {{ form.email(class='form-control') }}
             </div>
             <div class="mb-3">
-                <label for="SignupPassword" class="form-label">Name</label>
-                <input class="form-control" type="name" name="name" placeholder="First Name Last Name">
+                {{ form.name.label(class='form-label') }}<br>
+                {{ form.name(class='form-control') }}
             </div>
             <div class="mb-3">
-                <label for="SignupPassword" class="form-label">Password</label>
-                <input class="form-control" type="password" name="password" placeholder="Password">
+                {{ form.password.label(class='form-label') }}<br>
+                {{ form.password(class='form-control') }}
             </div>
-            <button type="submit" class="btn btn-primary">Sign Up</button>
+            {{ form.submit(class="btn btn-primary") }}
         </form>
     </div>
     </div>
