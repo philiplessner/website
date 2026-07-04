@@ -7,14 +7,11 @@ from .forms import LoginForm, SignupForm
 
 admin = Blueprint('admin', __name__)
 
-@admin.route('/login')
+@admin.route('/login', methods=['GET','POST'])
 def login():
-    form = LoginForm()
-    return render_template('login.html', form=form)
-
-@admin.route('/login', methods=['POST'])
-def login_post():
     form = LoginForm(request.form)
+    if (request.method == 'GET'):
+        return render_template('login.html', form=form)
     user = None
     if form.validate_on_submit():
         stmt = db.select(User).where(User.email == form.email.data)

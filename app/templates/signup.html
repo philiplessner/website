@@ -8,7 +8,12 @@
 {% with messages = get_flashed_messages() %}
 {% if messages %}
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        {{ messages[0] }}. Go to <a href="{{ url_for('admin.login') }}">login page</a>.
+        <ul class=flashes>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        Go to <a href="{{ url_for('admin.login') }}">login page</a>.
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
     </div>
 {% endif %}
