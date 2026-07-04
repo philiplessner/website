@@ -13,7 +13,6 @@
             <li>{{ message }}</li>
             {% endfor %}
         </ul>
-        Go to <a href="{{ url_for('admin.login') }}">login page</a>.
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
     </div>
 {% endif %}
@@ -31,6 +30,10 @@
             <div class="mb-3">
                 {{ form.password.label(class='form-label') }}<br>
                 {{ form.password(class='form-control') }}
+            </div>
+            <div class="mb-3">
+                {{ form.password2.label(class='form-label') }}<br>
+                {{ form.password2(class='form-control') }}
             </div>
             {{ form.submit(class="btn btn-primary") }}
         </form>

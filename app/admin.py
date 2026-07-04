@@ -42,19 +42,26 @@ def signup():
 @admin.route('/signup', methods=['POST'])
 def signup_post():
     form = SignupForm()
+    user = None
     if form.validate_on_submit():
         stmt = db.select(User).where(User.email == form.email.data)
         user = db.session.scalars(stmt).first()
-
-    if user:
-        flash('Email address already exists')
-        return redirect(url_for('admin.login'))
-
-    new_user = User(email=form.email.data, name=form.name.data, password_hash=generate_password_hash(form.password.data))
-    db.session.add(new_user)
-    db.session.commit()
-
-    return redirect(url_for('admin.login'))
+        if user: # User already exists
+            flash('Email address already exists')
+            return redirect(url_for('admin.signup'))
+        else: # Success!
+            new_user = User(email=form.email.data, name=form.name.data, password_hash=generate_password_hash(form.password.data))
+            db.session.add(new_user)
+            db.session.commit()
+            return redirect(url_for('admin.login'))
+    else:
+        for error in form.email.errors:
+            flash('Email: '+error)
+        for error in form.name.errors:
+            flash('Name: '+error)
+        for error in form.password2.errors:
+            flash('Password: '+error)
+        return redirect(url_for('admin.signup'))
 
 @admin.route('/logout')
 @login_required
