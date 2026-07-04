@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.models import User
@@ -10,17 +10,25 @@ admin = Blueprint('admin', __name__)
 @admin.route('/login')
 def login():
     form = LoginForm()
-    return render_template('login2.html', form=form)
+    return render_template('login.html', form=form)
 
 @admin.route('/login', methods=['POST'])
 def login_post():
-    form = LoginForm()
+    form = LoginForm(request.form)
+    user = None
     if form.validate_on_submit():
         stmt = db.select(User).where(User.email == form.email.data)
         user = db.session.scalars(stmt).first()
+    else:  # Missing data
+        for error in form.email.errors:
+            flash('Email: '+error)
+        for error in form.password.errors:
+            flash('Password: '+error)
+        return redirect(url_for('admin.login'))
 
+    # Incorrect data
     if not user or not check_password_hash(user.password_hash, form.password.data):
-        flash('Please check your login details and try again.')
+        flash('Incorrect Email or Password. Please check your login details and try again.')
         return redirect(url_for('admin.login'))
 
     login_user(user, remember=form.remember_me.data)
@@ -32,7 +40,7 @@ def signup():
     form = SignupForm()
     if not current_user.is_authenticated:
         return redirect(url_for('admin.login'))
-    return render_template('signup2.html', form=form)
+    return render_template('signup.html', form=form)
 
 @admin.route('/signup', methods=['POST'])
 def signup_post():
