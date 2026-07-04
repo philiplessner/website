@@ -18,9 +18,9 @@ def login():
         user = db.session.scalars(stmt).first()
     else:  # Missing data
         for error in form.email.errors:
-          flash('Email: '+error)
+          flash(error)
         for error in form.password.errors:
-            flash('Password: '+error)
+            flash(error)
         return redirect(url_for('admin.login'))
 
     # Incorrect data
@@ -54,13 +54,15 @@ def signup_post():
             db.session.add(new_user)
             db.session.commit()
             return redirect(url_for('admin.login'))
-    else:
+    else:  # Data validation failed
         for error in form.email.errors:
-            flash('Email: '+error)
+            flash(error)
         for error in form.name.errors:
-            flash('Name: '+error)
+            flash(error)
+        for error in form.password.errors:
+            flash(error)
         for error in form.password2.errors:
-            flash('Password: '+error)
+            flash(error)
         return redirect(url_for('admin.signup'))
 
 @admin.route('/logout')
