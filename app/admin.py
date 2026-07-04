@@ -21,7 +21,7 @@ def login_post():
         user = db.session.scalars(stmt).first()
     else:  # Missing data
         for error in form.email.errors:
-            flash('Email: '+error)
+          flash('Email: '+error)
         for error in form.password.errors:
             flash('Password: '+error)
         return redirect(url_for('admin.login'))
