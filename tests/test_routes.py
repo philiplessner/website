@@ -68,6 +68,12 @@ def test_login_with_correct_credentials(test_client):
     assert response.status_code == 302
     assert response.headers['Location'].endswith('/profile')
 
+    with test_client.application.app_context():
+        created_user = db.session.scalars(db.select(User).where(User.email == 'login-success@example.com')).first()
+        if created_user is not None:
+            db.session.delete(created_user)
+            db.session.commit()
+
 
 def test_login_with_incorrect_credentials(test_client):
     response = test_client.post('/login', data={
