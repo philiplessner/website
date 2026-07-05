@@ -1,3 +1,9 @@
+from werkzeug.security import generate_password_hash
+
+from app import db
+from app.models import User
+
+
 def test_home_page(test_client):
     response = test_client.get('/')
     assert response.status_code == 200
@@ -45,3 +51,30 @@ def test_aboutme_page(test_client):
     assert response.status_code == 200
     assert b"Papers" in response.data
     assert b"Patents" in response.data
+
+
+def test_login_with_correct_credentials(test_client):
+    with test_client.application.app_context():
+        user = User(email='login-success@example.com', password_hash=generate_password_hash('secret123'), name='Test User')
+        db.session.add(user)
+        db.session.commit()
+
+    response = test_client.post('/login', data={
+        'email': 'login-success@example.com',
+        'password': 'secret123',
+        'remember_me': False,
+    }, follow_redirects=False)
+
+    assert response.status_code == 302
+    assert response.headers['Location'].endswith('/profile')
+
+
+def test_login_with_incorrect_credentials(test_client):
+    response = test_client.post('/login', data={
+        'email': 'missing@example.com',
+        'password': 'wrong-password',
+        'remember_me': False,
+    }, follow_redirects=True)
+
+    assert response.status_code == 200
+    assert b'Incorrect Email or Password' in response.data
