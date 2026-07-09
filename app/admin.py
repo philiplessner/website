@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from app.models import User
+from app.models import User, Blog
 from . import db
 from .forms import LoginForm, SignupForm
 
@@ -76,4 +76,9 @@ def profile():
     if not current_user.is_authenticated:
         return redirect(url_for('admin.login'))
 
-    return render_template('profile.html', name=current_user.name)
+    stmt = (db.select(Blog.title, Blog.abstract, Blog.date, Blog.medialink, Blog.mediatype, Blog.id)
+                      .select_from(Blog)
+                      .order_by(Blog.date.desc()))
+    blogs = db.session.execute(stmt).all()
+    template_data = {'blogs': blogs}
+    return render_template('profile.html', **template_data)
