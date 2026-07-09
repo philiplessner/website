@@ -4,12 +4,32 @@
 <form method="POST" action="/blogedit" novalidate>
     {{ form.hidden_tag() }}
     <div class="mb-3">
+        {{ form.blogtitle.label(class='form-label') }}<br>
+        {{ form.blogtitle(class='form-control') }}
+    </div>
+    <div class="mb-3">
+        {{ form.blogdate.label(class='form-label') }}<br>
+        {{ form.blogdate(class='form-control') }}
+    </div>
+    <div class="mb-3">
         {{ form.blogabstract.label(class='form-label') }}<br>
         {{ form.blogabstract(class='form-control', rows='5') }}
     </div>
     <div class="mb-3">
         {{ form.blogbody.label(class='form-label') }}<br>
         {{ form.blogbody(class='form-control', rows='20') }}
+    </div>
+    <div class="mb-3">
+        {{ form.blogpagecss.label(class='form-label') }}<br>
+        {{ form.blogpagecss(class='form-control', rows='20') }}
+    </div>
+    <div class="mb-3">
+        {{ form.blogmedialink.label(class='form-label') }}<br>
+        {{ form.blogmedialink(class='form-control') }}
+    </div>
+    <div class="mb-3">
+        {{ form.blogmediatype.label(class='form-label') }}<br>
+        {{ form.blogmediatype(class='form-control') }}
     </div>
     {{ form.submit(class="btn btn-primary") }}
 </form>

@@ -100,11 +100,21 @@ def blog_select():
 
 @admin.route('/blogedit/<blogid>', methods=['GET', 'POST'])
 def blog_edit(blogid):
+    if not current_user.is_authenticated:
+        return redirect(url_for('admin.login'))
     form = BlogEditForm()
     stmt = db.select(Blog).where(Blog.id == blogid)
     blog = db.session.scalars(stmt).first()
+    form.blogtitle.data = blog.title
+    form.blogdate.data = blog.date
     form.blogabstract.data = blog.abstract
     form.blogbody.data = blog.body
+    form.blogmedialink.data = blog.medialink
+    form.blogmediatype.data = blog.mediatype
+    if blog.pagecss is None:
+        form.blogpagecss.data = ''
+    else:
+        form.blogpagecss.data = blog.pagecss
     return render_template('blogedit.html', form=form)
     if form.validate_on_submit:
         pass

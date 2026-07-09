@@ -1,6 +1,3 @@
-from tokenize import String
-from xxlimited import Str
-
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField
 from wtforms.validators import DataRequired, EqualTo
@@ -27,8 +24,10 @@ class BlogSelectForm(FlaskForm):
 
 
 class BlogEditForm(FlaskForm):
+    blogtitle = TextAreaField('Title', validators=[DataRequired(message='Title is Required')])
     blogabstract =  TextAreaField('Abstract', validators=[DataRequired(message='Abstract is Required')])
     blogbody = TextAreaField('Body', validators=[DataRequired(message='Blog Body is Required')])
+    blogpagecss = TextAreaField('Custom CSS')
     blogdate = StringField('Date', validators=[DataRequired(message='Date is Required')])
     blogmedialink = StringField('Media Link', validators=[DataRequired(message='Link to Media is Required')])
     blogmediatype = StringField('Media Type', validators=[DataRequired(message='Media Type is Required')])
