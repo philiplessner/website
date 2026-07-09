@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
 from wtforms.validators import DataRequired, EqualTo
 
 
@@ -16,3 +16,8 @@ class SignupForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired(message='Password Required')])
     password2 = PasswordField( 'Repeat Password', validators=[DataRequired(message='You Must Type Your Password Twice'), EqualTo('password', message='Passwords Must be the Same')])
     submit = SubmitField('Sign Up')
+
+
+class BlogEditForm(FlaskForm):
+    blogid = SelectField('Select Blog ID')
+    submit = SubmitField('Blog to Edit')

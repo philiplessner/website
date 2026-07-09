@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.models import User, Blog
 from . import db
-from .forms import LoginForm, SignupForm
+from .forms import LoginForm, SignupForm, BlogEditForm
 
 admin = Blueprint('admin', __name__)
 
@@ -75,10 +75,22 @@ def logout():
 def profile():
     if not current_user.is_authenticated:
         return redirect(url_for('admin.login'))
-
     stmt = (db.select(Blog.title, Blog.abstract, Blog.date, Blog.medialink, Blog.mediatype, Blog.id)
                       .select_from(Blog)
                       .order_by(Blog.date.desc()))
     blogs = db.session.execute(stmt).all()
     template_data = {'blogs': blogs}
     return render_template('profile.html', **template_data)
+
+@admin.route('/blogedit')
+def blog_edit():
+    if not current_user.is_authenticated:
+        return redirect(url_for('admin.login'))
+    form = BlogEditForm()
+    stmt = (db.select(Blog.id)
+                      .select_from(Blog)
+                      .order_by(Blog.date.desc()))
+    blogs = db.session.execute(stmt).all()
+    blog_ids = [t[0] for t in blogs]
+    form.blogid.choices = blog_ids
+    return render_template('blogedit.html', form=form)
