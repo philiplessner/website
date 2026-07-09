@@ -82,15 +82,21 @@ def profile():
     template_data = {'blogs': blogs}
     return render_template('profile.html', **template_data)
 
-@admin.route('/blogedit')
+@admin.route('/blogedit', methods=['GET', 'POST'])
 def blog_edit():
     if not current_user.is_authenticated:
         return redirect(url_for('admin.login'))
     form = BlogEditForm()
-    stmt = (db.select(Blog.id)
-                      .select_from(Blog)
-                      .order_by(Blog.date.desc()))
-    blogs = db.session.execute(stmt).all()
-    blog_ids = [t[0] for t in blogs]
-    form.blogid.choices = blog_ids
-    return render_template('blogedit.html', form=form)
+    if (request.method == 'GET'):
+        stmt = (db.select(Blog.id)
+                        .select_from(Blog)
+                        .order_by(Blog.date.desc()))
+        blogs = db.session.execute(stmt).all()
+        blog_ids = [t[0] for t in blogs]
+        form.blogid.choices = blog_ids
+        return render_template('blogedit.html', form=form)
+    if form.validate_on_submit:
+        stmt = db.select(Blog).where(Blog.id == form.blogid.data)
+        blog = db.session.scalars(stmt).first()
+        form.blogabstract.data = blog.abstract
+        return render_template('blogedit.html', form=form)

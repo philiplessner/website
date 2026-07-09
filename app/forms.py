@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField
 from wtforms.validators import DataRequired, EqualTo
 
 
@@ -19,5 +19,6 @@ class SignupForm(FlaskForm):
 
 
 class BlogEditForm(FlaskForm):
-    blogid = SelectField('Select Blog ID')
+    blogid = SelectField('Select Blog ID', validators=[DataRequired(message='Must Select a Blog')])
+    blogabstract =  TextAreaField('Abstract', validators=[DataRequired(message='Abstract is Required')])
     submit = SubmitField('Blog to Edit')
