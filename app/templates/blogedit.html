@@ -10,7 +10,11 @@
     {{ form.submit(class="btn btn-primary") }}
     <div class="mb-3">
         {{ form.blogabstract.label(class='form-label') }}<br>
-        {{ form.blogabstract(class='form-control') }}
+        {{ form.blogabstract(class='form-control', rows='5') }}
+    </div>
+    <div class="mb-3">
+        {{ form.blogbody.label(class='form-label') }}<br>
+        {{ form.blogbody(class='form-control', rows='20') }}
     </div>
 </form>
 {% endblock %}

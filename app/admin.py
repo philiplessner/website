@@ -99,4 +99,5 @@ def blog_edit():
         stmt = db.select(Blog).where(Blog.id == form.blogid.data)
         blog = db.session.scalars(stmt).first()
         form.blogabstract.data = blog.abstract
+        form.blogbody.data = blog.body
         return render_template('blogedit.html', form=form)

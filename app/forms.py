@@ -21,4 +21,5 @@ class SignupForm(FlaskForm):
 class BlogEditForm(FlaskForm):
     blogid = SelectField('Select Blog ID', validators=[DataRequired(message='Must Select a Blog')])
     blogabstract =  TextAreaField('Abstract', validators=[DataRequired(message='Abstract is Required')])
+    blogbody = TextAreaField('Body', validators=[DataRequired(message='Blog Body is Required')])
     submit = SubmitField('Blog to Edit')
