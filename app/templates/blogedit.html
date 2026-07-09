@@ -4,11 +4,6 @@
 <form method="POST" action="/blogedit" novalidate>
     {{ form.hidden_tag() }}
     <div class="mb-3">
-        {{ form.blogid.label(class='form-label') }}<br>
-        {{ form.blogid(class='form-select') }}
-    </div>
-    {{ form.submit(class="btn btn-primary") }}
-    <div class="mb-3">
         {{ form.blogabstract.label(class='form-label') }}<br>
         {{ form.blogabstract(class='form-control', rows='5') }}
     </div>
@@ -16,5 +11,6 @@
         {{ form.blogbody.label(class='form-label') }}<br>
         {{ form.blogbody(class='form-control', rows='20') }}
     </div>
+    {{ form.submit(class="btn btn-primary") }}
 </form>
 {% endblock %}

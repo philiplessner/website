@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+
+<form method="POST" action="/blogselect" novalidate>
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+        {{ form.blogid.label(class='form-label') }}<br>
+        {{ form.blogid(class='form-select') }}
+    </div>
+    {{ form.submit(class="btn btn-primary") }}
+</form>
+
+{% endblock %}

@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.models import User, Blog
 from . import db
-from .forms import LoginForm, SignupForm, BlogEditForm
+from .forms import LoginForm, SignupForm, BlogSelectForm, BlogEditForm
 
 admin = Blueprint('admin', __name__)
 
@@ -82,11 +82,11 @@ def profile():
     template_data = {'blogs': blogs}
     return render_template('profile.html', **template_data)
 
-@admin.route('/blogedit', methods=['GET', 'POST'])
-def blog_edit():
+@admin.route('/blogselect', methods=['GET', 'POST'])
+def blog_select():
     if not current_user.is_authenticated:
         return redirect(url_for('admin.login'))
-    form = BlogEditForm()
+    form = BlogSelectForm()
     if (request.method == 'GET'):
         stmt = (db.select(Blog.id)
                         .select_from(Blog)
@@ -94,10 +94,17 @@ def blog_edit():
         blogs = db.session.execute(stmt).all()
         blog_ids = [t[0] for t in blogs]
         form.blogid.choices = blog_ids
-        return render_template('blogedit.html', form=form)
+        return render_template('blogselect.html', form=form)
     if form.validate_on_submit:
-        stmt = db.select(Blog).where(Blog.id == form.blogid.data)
-        blog = db.session.scalars(stmt).first()
-        form.blogabstract.data = blog.abstract
-        form.blogbody.data = blog.body
-        return render_template('blogedit.html', form=form)
+        return redirect(url_for('admin.blog_edit', blogid=int(form.blogid.data)))
+
+@admin.route('/blogedit/<blogid>', methods=['GET', 'POST'])
+def blog_edit(blogid):
+    form = BlogEditForm()
+    stmt = db.select(Blog).where(Blog.id == blogid)
+    blog = db.session.scalars(stmt).first()
+    form.blogabstract.data = blog.abstract
+    form.blogbody.data = blog.body
+    return render_template('blogedit.html', form=form)
+    if form.validate_on_submit:
+        pass
