@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-<form method="POST" action="/blogedit" novalidate>
+<form method="POST" action="{{ url_for('admin.blog_edit', blogid=blogid) }}" novalidate>
     {{ form.hidden_tag() }}
     <div class="mb-3">
         {{ form.blogtitle.label(class='form-label') }}<br>
