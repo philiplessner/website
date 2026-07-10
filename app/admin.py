@@ -119,4 +119,5 @@ def blog_edit(blogid):
         return render_template('blogedit.html', form=form, blogid=blogid)
     if form.validate_on_submit():
         blog.title = form.blogtitle.data
+        db.session.commit()
         return blog.title
