@@ -13,6 +13,15 @@
     {{ form.submit(class="btn btn-primary") }}
 </form>
         </div>
+        <div class="col-5">
+  <div class="overflow-auto border p-3" style="max-height: 600px;">
+  {% for blog in blogs %}
+    <p><strong>Blog ID: </strong> {{ blog[5] }}</p>
+    <p><strong>Blog Title: </strong>{{ blog[0] }}</p>
+    <hr>
+    {% endfor %}
+  </div>
+  </div>
     </div>
 </div>
 

@@ -88,13 +88,18 @@ def blog_select():
         return redirect(url_for('admin.login'))
     form = BlogSelectForm()
     if (request.method == 'GET'):
-        stmt = (db.select(Blog.id)
+        stmt = (db.select(Blog.title, Blog.abstract, Blog.date, Blog.medialink, Blog.mediatype, Blog.id)
                         .select_from(Blog)
                         .order_by(Blog.date.desc()))
         blogs = db.session.execute(stmt).all()
-        blog_ids = [t[0] for t in blogs]
+        template_data = {'blogs': blogs}
+       # stmt = (db.select(Blog.id)
+       #                .select_from(Blog)
+       #                .order_by(Blog.date.desc()))
+       # blogs = db.session.execute(stmt).all()
+        blog_ids = [t[5] for t in blogs]
         form.blogid.choices = blog_ids
-        return render_template('blogselect.html', form=form)
+        return render_template('blogselect.html', **template_data, form=form)
     if form.validate_on_submit:
         return redirect(url_for('admin.blog_edit', blogid=int(form.blogid.data)))
 
