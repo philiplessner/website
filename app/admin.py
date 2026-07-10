@@ -102,7 +102,7 @@ def blog_select():
 def blog_edit(blogid):
     if not current_user.is_authenticated:
         return redirect(url_for('admin.login'))
-    form = BlogEditForm()
+    form = BlogEditForm(request.form)
     stmt = db.select(Blog).where(Blog.id == blogid)
     blog = db.session.scalars(stmt).first()
     if (request.method == 'GET'):
