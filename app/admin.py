@@ -81,7 +81,7 @@ def profile():
 def blog_select():
     if not current_user.is_authenticated:
         return redirect(url_for('admin.login'))
-    form = BlogSelectForm()
+    form = BlogSelectForm(request.form)
     if (request.method == 'GET'):
         stmt = (db.select(Blog.title, Blog.abstract, Blog.date, Blog.medialink, Blog.mediatype, Blog.id)
                         .select_from(Blog)
@@ -91,8 +91,8 @@ def blog_select():
         blog_ids = [t[5] for t in blogs]
         form.blogid.choices = blog_ids
         return render_template('blogselect.html', **template_data, form=form)
-    if form.validate_on_submit:
-        return redirect(url_for('admin.blog_edit', blogid=int(form.blogid.data)))
+    if form.validate_on_submit():
+        return redirect(url_for('admin.blog_edit', blogid=form.blogid.data))
 
 @admin.route('/blogedit/<blogid>', methods=['GET', 'POST'])
 def blog_edit(blogid):

@@ -19,7 +19,7 @@ class SignupForm(FlaskForm):
 
 
 class BlogSelectForm(FlaskForm):
-    blogid = SelectField('Select Blog ID', validators=[DataRequired(message='Must Select a Blog')])
+    blogid = SelectField('Select Blog ID', validate_choice=False, coerce=int)
     submit = SubmitField('Blog to Edit')
 
 
