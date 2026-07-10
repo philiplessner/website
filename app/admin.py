@@ -75,12 +75,7 @@ def logout():
 def profile():
     if not current_user.is_authenticated:
         return redirect(url_for('admin.login'))
-    stmt = (db.select(Blog.title, Blog.abstract, Blog.date, Blog.medialink, Blog.mediatype, Blog.id)
-                      .select_from(Blog)
-                      .order_by(Blog.date.desc()))
-    blogs = db.session.execute(stmt).all()
-    template_data = {'blogs': blogs}
-    return render_template('profile.html', **template_data)
+    return render_template('profile.html', current_user=current_user.name)
 
 @admin.route('/blogselect', methods=['GET', 'POST'])
 def blog_select():
@@ -93,10 +88,6 @@ def blog_select():
                         .order_by(Blog.date.desc()))
         blogs = db.session.execute(stmt).all()
         template_data = {'blogs': blogs}
-       # stmt = (db.select(Blog.id)
-       #                .select_from(Blog)
-       #                .order_by(Blog.date.desc()))
-       # blogs = db.session.execute(stmt).all()
         blog_ids = [t[5] for t in blogs]
         form.blogid.choices = blog_ids
         return render_template('blogselect.html', **template_data, form=form)
@@ -134,4 +125,4 @@ def blog_edit(blogid):
         else:
             blog.pagecss = form.blogpagecss.data
         db.session.commit()
-        return redirect(url_for('admin.profile'))
+        return redirect(url_for('admin.blog_select'))
