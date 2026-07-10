@@ -103,9 +103,9 @@ def blog_edit(blogid):
     if not current_user.is_authenticated:
         return redirect(url_for('admin.login'))
     form = BlogEditForm()
+    stmt = db.select(Blog).where(Blog.id == blogid)
+    blog = db.session.scalars(stmt).first()
     if (request.method == 'GET'):
-        stmt = db.select(Blog).where(Blog.id == blogid)
-        blog = db.session.scalars(stmt).first()
         form.blogtitle.data = blog.title
         form.blogdate.data = blog.date
         form.blogabstract.data = blog.abstract
@@ -118,4 +118,5 @@ def blog_edit(blogid):
             form.blogpagecss.data = blog.pagecss
         return render_template('blogedit.html', form=form, blogid=blogid)
     if form.validate_on_submit():
-        return "Hello, World"
+        blog.title = form.blogtitle.data
+        return blog.title
