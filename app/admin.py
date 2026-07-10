@@ -105,7 +105,7 @@ def blog_edit(blogid):
     form = BlogEditForm(request.form)
     stmt = db.select(Blog).where(Blog.id == blogid)
     blog = db.session.scalars(stmt).first()
-    if (request.method == 'GET'):
+    if (request.method == 'GET'): # For GET request, populate the form with database records
         form.blogtitle.data = blog.title
         form.blogdate.data = blog.date
         form.blogabstract.data = blog.abstract
@@ -117,7 +117,16 @@ def blog_edit(blogid):
         else:
             form.blogpagecss.data = blog.pagecss
         return render_template('blogedit.html', form=form, blogid=blogid)
-    if form.validate_on_submit():
+    if form.validate_on_submit(): # For PUT request, write new data to database using info. in form
         blog.title = form.blogtitle.data
+        blog.date = form.blogdate.data
+        blog.abstract = form.blogabstract.data
+        blog.body = form.blogbody.data
+        blog.medialink = form.blogmedialink.data
+        blog.mediatype = form.blogmediatype.data
+        if (form.blogpagecss.data == ''):
+            blog.pagecss = None
+        else:
+            blog.pagecss = form.blogpagecss.data
         db.session.commit()
-        return blog.title
+        return redirect(url_for('admin.profile'))
