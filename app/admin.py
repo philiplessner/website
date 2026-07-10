@@ -108,7 +108,7 @@ def blog_edit(blogid):
         form.blogbody.data = blog.body
         form.blogmedialink.data = blog.medialink
         form.blogmediatype.data = blog.mediatype
-        if blog.pagecss is None:
+        if blog.pagecss is None: # NULL in SQLite is None in Python
             form.blogpagecss.data = ''
         else:
             form.blogpagecss.data = blog.pagecss
