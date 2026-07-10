@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
-
+<div class=""mb-3">
+<h3>Blog ID: {{ blogid }}</h3>
+</div>
 <form method="POST" action="{{ url_for('admin.blog_edit', blogid=blogid) }}" novalidate>
     {{ form.hidden_tag() }}
     <div class="mb-3">

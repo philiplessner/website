@@ -117,5 +117,5 @@ def blog_edit(blogid):
         else:
             form.blogpagecss.data = blog.pagecss
         return render_template('blogedit.html', form=form, blogid=blogid)
-    if form.validate_on_submit:
-        pass
+    if form.validate_on_submit():
+        return "Hello, World"
