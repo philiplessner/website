@@ -7,6 +7,13 @@ from .forms import LoginForm, SignupForm, BlogSelectForm, BlogEditForm
 
 admin = Blueprint('admin', __name__)
 
+
+def flash_form_errors(form):
+    for field in form:
+        for error in field.errors:
+            flash(error)
+
+
 @admin.route('/login', methods=['GET','POST'])
 def login():
     form = LoginForm(request.form)
@@ -17,10 +24,7 @@ def login():
         stmt = db.select(User).where(User.email == form.email.data)
         user = db.session.scalars(stmt).first()
     else:  # Missing data
-        for error in form.email.errors:
-          flash(error)
-        for error in form.password.errors:
-            flash(error)
+        flash_form_errors(form)
         return redirect(url_for('admin.login'))
 
     # Incorrect data
@@ -55,14 +59,7 @@ def signup_post():
             db.session.commit()
             return redirect(url_for('admin.login'))
     else:  # Data validation failed
-        for error in form.email.errors:
-            flash(error)
-        for error in form.name.errors:
-            flash(error)
-        for error in form.password.errors:
-            flash(error)
-        for error in form.password2.errors:
-            flash(error)
+        flash_form_errors(form)
         return redirect(url_for('admin.signup'))
 
 @admin.route('/logout')
@@ -113,10 +110,10 @@ def blog_edit(blogid):
         else:
             form.blogpagecss.data = blog.pagecss
         return render_template('blogedit.html', form=form, blogid=blogid)
-    if (request.method == 'POST'):
+    if (request.method == 'POST'):  # For PUT request, write new data to database using info. in form or Cancel
         if form.submit_cancel.name in request.form:
                 return redirect(url_for('admin.blog_select'))
-        if form.validate_on_submit(): # For PUT request, write new data to database using info. in form or Cancel
+        if form.validate_on_submit(): 
             if form.submit_commit.data:
                 blog.title = form.blogtitle.data
                 blog.date = form.blogdate.data
@@ -124,9 +121,9 @@ def blog_edit(blogid):
                 blog.body = form.blogbody.data
                 blog.medialink = form.blogmedialink.data
                 blog.mediatype = form.blogmediatype.data
-                if (form.blogpagecss.data == ''):
-                    blog.pagecss = None
-                else:
-                    blog.pagecss = form.blogpagecss.data
+                blog.pagecss = None if form.blogpagecss.data == '' else form.blogpagecss.data
                 db.session.commit()
-            return redirect(url_for('admin.blog_select'))
+                return redirect(url_for('admin.blog_select'))
+        else: # Data Error in form
+            flash_form_errors(form)
+            return render_template('blogedit.html', form=form, blogid=blogid)
