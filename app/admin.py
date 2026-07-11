@@ -72,7 +72,7 @@ def logout():
 def profile():
     if not current_user.is_authenticated:
         return redirect(url_for('admin.login'))
-    return render_template('profile.html', current_user=current_user.name)
+    return render_template('profile.html', current_user_name=current_user.name)
 
 @admin.route('/blogselect', methods=['GET', 'POST'])
 def blog_select():
