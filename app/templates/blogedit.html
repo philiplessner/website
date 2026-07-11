@@ -19,11 +19,11 @@
     </div>
     <div class="mb-3">
         {{ form.blogbody.label(class='form-label') }}<br>
-        {{ form.blogbody(class='form-control', rows='20') }}
+        {{ form.blogbody(class='form-control', rows='20') | safe }}
     </div>
     <div class="mb-3">
         {{ form.blogpagecss.label(class='form-label') }}<br>
-        {{ form.blogpagecss(class='form-control', rows='20') }}
+        {{ form.blogpagecss(class='form-control', rows='5') }}
     </div>
     <div class="mb-3">
         {{ form.blogmedialink.label(class='form-label') }}<br>
@@ -33,6 +33,6 @@
         {{ form.blogmediatype.label(class='form-label') }}<br>
         {{ form.blogmediatype(class='form-control') }}
     </div>
-    {{ form.submit(class="btn btn-primary") }}
+    {{ form.submit_commit(class="btn btn-primary") }} {{ form.submit_cancel(class="btn btn-secondary") }}
 </form>
 {% endblock %}

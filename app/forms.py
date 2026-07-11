@@ -31,4 +31,5 @@ class BlogEditForm(FlaskForm):
     blogdate = StringField('Date', validators=[DataRequired(message='Date is Required')])
     blogmedialink = StringField('Media Link', validators=[DataRequired(message='Link to Media is Required')])
     blogmediatype = StringField('Media Type', validators=[DataRequired(message='Media Type is Required')])
-    submit = SubmitField('Publish to Database')
+    submit_commit = SubmitField('Publish to Database')
+    submit_cancel = SubmitField('Cancel')
