@@ -114,7 +114,7 @@ def blog_edit(blogid):
         else:
             form.blogpagecss.data = blog.pagecss
         return render_template('blogedit.html', form=form, blogid=blogid)
-    elif (request.method == 'GET' and int(blogid) < 0): # For GET request, populate the form with database records, if an existing blog
+    elif (request.method == 'GET' and int(blogid) < 0): # For GET request, create am empty form, if new blog
         form.blogtitle.data = ''
         form.blogdate.data = ''
         form.blogabstract.data = ''
@@ -127,7 +127,7 @@ def blog_edit(blogid):
         if form.submit_cancel.name in request.form:
                 return redirect(url_for('admin.blog_select'))
         if form.validate_on_submit(): 
-            if form.submit_commit.data:
+            if form.submit_commit.data and int(blogid) >= 0: # Updating an existing blog entry
                 blog.title = form.blogtitle.data
                 blog.date = form.blogdate.data
                 blog.abstract = form.blogabstract.data
@@ -136,7 +136,18 @@ def blog_edit(blogid):
                 blog.mediatype = form.blogmediatype.data
                 blog.pagecss = None if form.blogpagecss.data == '' else form.blogpagecss.data
                 db.session.commit()
-                return redirect(url_for('admin.blog_select'))
+            elif form.submit_commit.data and int(blogid) < 0:
+                blog_dict = {'title': form.blogtitle.data,
+                             'date': form.blogdate.data,
+                             'abstract': form.blogabstract.data,
+                             'body': form.blogbody.data,
+                             'medialink': form.blogmedialink.data,
+                             'mediatype': form.blogmediatype.data,
+                             'pagecss': form.blogpagecss.data}
+                record = Blog(**blog_dict)
+                db.session.add(record)
+                db.session.commit()
+            return redirect(url_for('admin.blog_select'))
         else: # Data Error in form
             flash_form_errors(form)
             return render_template('blogedit.html', form=form, blogid=blogid)
