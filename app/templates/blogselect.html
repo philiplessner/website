@@ -10,7 +10,12 @@
         {{ form.blogid.label(class='form-label') }}<br>
         {{ form.blogid(class='form-select') }}
     </div>
-    {{ form.submit(class="btn btn-primary") }}
+    {{ form.submit_edit(class="btn btn-primary") }}
+    <div class="row mt-4">
+        <div class="col-3">
+    {{ form.submit_new(class="btn btn-primary") }}
+        </div>
+    </div>
 </form>
         </div>
         <div class="col-5">

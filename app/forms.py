@@ -20,7 +20,8 @@ class SignupForm(FlaskForm):
 
 class BlogSelectForm(FlaskForm):
     blogid = SelectField('Select Blog ID', validate_choice=False, coerce=int)
-    submit = SubmitField('Blog to Edit')
+    submit_edit = SubmitField('Blog to Edit')
+    submit_new = SubmitField('New Blog Entry')
 
 
 class BlogEditForm(FlaskForm):

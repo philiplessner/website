@@ -89,16 +89,20 @@ def blog_select():
         form.blogid.choices = blog_ids
         return render_template('blogselect.html', **template_data, form=form)
     if form.validate_on_submit():
-        return redirect(url_for('admin.blog_edit', blogid=form.blogid.data))
+        if form.submit_edit.data:  # If user clicked the edit button
+            return redirect(url_for('admin.blog_edit', blogid=form.blogid.data))
+        elif form.submit_new.data: # If user clicked the new button
+            return redirect(url_for('admin.blog_edit', blogid=-1))
 
 @admin.route('/blogedit/<blogid>', methods=['GET', 'POST'])
 def blog_edit(blogid):
     if not current_user.is_authenticated:
         return redirect(url_for('admin.login'))
     form = BlogEditForm(request.form)
-    stmt = db.select(Blog).where(Blog.id == blogid)
-    blog = db.session.scalars(stmt).first()
-    if (request.method == 'GET'): # For GET request, populate the form with database records
+    if (int(blogid) >= 0): # Existing Blog
+        stmt = db.select(Blog).where(Blog.id == blogid)
+        blog = db.session.scalars(stmt).first()
+    if (request.method == 'GET' and int(blogid) >= 0): # For GET request, populate the form with database records, if an existing blog
         form.blogtitle.data = blog.title
         form.blogdate.data = blog.date
         form.blogabstract.data = blog.abstract
@@ -109,6 +113,15 @@ def blog_edit(blogid):
             form.blogpagecss.data = ''
         else:
             form.blogpagecss.data = blog.pagecss
+        return render_template('blogedit.html', form=form, blogid=blogid)
+    elif (request.method == 'GET' and int(blogid) < 0): # For GET request, populate the form with database records, if an existing blog
+        form.blogtitle.data = ''
+        form.blogdate.data = ''
+        form.blogabstract.data = ''
+        form.blogbody.data = ''
+        form.blogmedialink.data = ''
+        form.blogmediatype.data = ''
+        form.blogpagecss.data = ''
         return render_template('blogedit.html', form=form, blogid=blogid)
     if (request.method == 'POST'):  # For PUT request, write new data to database using info. in form or Cancel
         if form.submit_cancel.name in request.form:
