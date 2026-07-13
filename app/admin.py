@@ -109,10 +109,7 @@ def blog_edit(blogid):
         form.blogbody.data = blog.body
         form.blogmedialink.data = blog.medialink
         form.blogmediatype.data = blog.mediatype
-        if blog.pagecss is None: # NULL in SQLite is None in Python
-            form.blogpagecss.data = ''
-        else:
-            form.blogpagecss.data = blog.pagecss
+        blog.pagecss = None if form.blogpagecss.data == '' else form.blogpagecss.data
         return render_template('blogedit.html', form=form, blogid=blogid)
     elif (request.method == 'GET' and int(blogid) < 0): # For GET request, create am empty form, if new blog
         form.blogtitle.data = ''
@@ -123,7 +120,7 @@ def blog_edit(blogid):
         form.blogmediatype.data = ''
         form.blogpagecss.data = ''
         return render_template('blogedit.html', form=form, blogid=blogid)
-    if (request.method == 'POST'):  # For PUT request, write new data to database using info. in form or Cancel
+    if (request.method == 'POST'):  # For POST request, write new data to database using info. in form or Cancel
         if form.submit_cancel.name in request.form:
                 return redirect(url_for('admin.blog_select'))
         if form.validate_on_submit(): 
@@ -143,7 +140,7 @@ def blog_edit(blogid):
                              'body': form.blogbody.data,
                              'medialink': form.blogmedialink.data,
                              'mediatype': form.blogmediatype.data,
-                             'pagecss': form.blogpagecss.data}
+                             'pagecss': None if form.blogpagecss.data == '' else form.blogpagecss.data}
                 record = Blog(**blog_dict)
                 db.session.add(record)
                 db.session.commit()
