@@ -93,6 +93,12 @@ def blog_select():
             return redirect(url_for('admin.blog_edit', blogid=form.blogid.data))
         elif form.submit_new.data: # If user clicked the new button
             return redirect(url_for('admin.blog_edit', blogid=-1))
+        elif form.submit_delete.data: # If user clicked on the delete button
+            stmt = db.select(Blog).where(Blog.id == form.blogid.data)
+            blog2delete = db.session.execute(stmt).scalar_one_or_none()
+            db.session.delete(blog2delete)
+            db.session.commit()
+            return redirect(url_for('admin.blog_select'))
 
 @admin.route('/blogedit/<blogid>', methods=['GET', 'POST'])
 def blog_edit(blogid):

@@ -22,6 +22,7 @@ class BlogSelectForm(FlaskForm):
     blogid = SelectField('Select Blog ID', validate_choice=False, coerce=int)
     submit_edit = SubmitField('Edit a Blog')
     submit_new = SubmitField('Create a New Blog Entry')
+    submit_delete = SubmitField('Delete a Blog')
 
 
 class BlogEditForm(FlaskForm):
@@ -32,5 +33,5 @@ class BlogEditForm(FlaskForm):
     blogdate = StringField('Date', validators=[DataRequired(message='Date is Required')])
     blogmedialink = StringField('Media Link', validators=[DataRequired(message='Link to Media is Required')])
     blogmediatype = StringField('Media Type', validators=[DataRequired(message='Media Type is Required')])
-    submit_commit = SubmitField('Publish to Database')
+    submit_commit = SubmitField('Publish Blog')
     submit_cancel = SubmitField('Cancel', render_kw={'formnovalidate': True})
