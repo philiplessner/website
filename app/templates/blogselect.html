@@ -8,9 +8,9 @@
     {{ form.hidden_tag() }}
     <div class="mb-3">
         {{ form.blogid.label(class='form-label') }}<br>
-        {{ form.blogid(class='form-select') }}
+        {{ form.blogid(id='blogid-select', class='form-select') }}
     </div>
-    {{ form.submit_edit(class="btn btn-primary") }} {{ form.submit_delete(class="btn btn-danger") }}
+    {{ form.submit_edit(class="btn btn-primary") }} {{ form.submit_delete(id='delete-button', class="btn btn-danger") }}
     <div class="row mt-4">
         <div class="col-3">
     {{ form.submit_new(class="btn btn-primary") }} 
@@ -19,6 +19,22 @@
 </form>
         </div>
         <div class="col-5">
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const select = document.getElementById('blogid-select');
+      const button = document.getElementById('delete-button');
+      if (select && button) {
+        const updateDeleteConfirm = () => {
+          const blogId = select.value;
+          button.onclick = function () {
+            return confirm('Are you sure you want to delete blog number ' + blogId + '?');
+          };
+        };
+        updateDeleteConfirm();
+        select.addEventListener('change', updateDeleteConfirm);
+      }
+    });
+  </script>
   <div class="overflow-auto border p-3" style="max-height: 600px;">
   {% for blog in blogs %}
     <p><strong>Blog ID: </strong> {{ blog[5] }}</p>
