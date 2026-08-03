@@ -1,9 +1,6 @@
-from typing import List, Optional
-from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.orm import relationship
 from flask_login import UserMixin
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 class Base(DeclarativeBase):
@@ -16,7 +13,7 @@ class Page(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     pagetitle: Mapped[str]
     pageroute: Mapped[str]
-    images: Mapped[List["Image"]] = relationship(back_populates="pages")
+    images: Mapped[list["Image"]] = relationship(back_populates="pages")
 
     def __repr__(self) -> str:
         return f"<Page(id={self.id}, pagetitle={self.pagetitle}, pageroute={self.pageroute})>"
@@ -61,7 +58,7 @@ class Blog(Base):
     abstract: Mapped[str]
     medialink: Mapped[str]
     mediatype: Mapped[str]
-    pagecss: Mapped[Optional[str]]
+    pagecss: Mapped[str | None]
 
     def __repr__(self) -> str:
         return f"<Blog(id={self.id}, title={self.title}, date={self.date})>"
