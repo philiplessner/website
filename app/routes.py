@@ -1,9 +1,10 @@
 from collections import namedtuple
-from flask import render_template, send_from_directory
+
+from flask import Blueprint, render_template, send_from_directory
 from sqlalchemy import func
+
 from app import db
-from app.models import Page, Image, Reference, Blog
-from flask import Blueprint
+from app.models import Blog, Image, Page, Reference
 
 bp = Blueprint('views', __name__, url_prefix='/')
 
