@@ -117,7 +117,7 @@ def blog_edit(blogid):
         form.blogbody.data = blog.body
         form.blogmedialink.data = blog.medialink
         form.blogmediatype.data = blog.mediatype
-        blog.pagecss = None if form.blogpagecss.data == '' else form.blogpagecss.data
+        form.blogpagecss.data = None if blog.pagecss == '' else blog.pagecss
         return render_template('blogedit.html', form=form, blogid=blogid)
     elif (request.method == 'GET' and int(blogid) < 0): # For GET request, create am empty form, if new blog
         form.blogtitle.data = ''
