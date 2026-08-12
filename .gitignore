@@ -8,3 +8,4 @@ scripts/token.json
 scripts/links.txt
 .env
 app/db/website.db
+requirements.txt
