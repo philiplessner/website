@@ -38,8 +38,8 @@ def blog():
                       .select_from(Blog)
                       .order_by(Blog.date.desc()))
     blogs = db.session.execute(stmt).all()
-    rows = list()
-    row = list()
+    rows = []
+    row = []
     count = 0
     for blog in blogs:
         row.append(blog)
@@ -76,8 +76,8 @@ def photos(location):
     '''
 #    cap_location = location.capitalize()
     cap_location = location.title()
-    templateData = dict()
-    rows = list()
+    templateData = {}
+    rows = []
     stmt = db.select(Page.pagetitle).where(Page.pagetitle==cap_location)
     templateData.update({"title": db.first_or_404(stmt)})
     stmt = db.select(func.max(Image.pagerow)).join(Page).where(Page.pagetitle==cap_location)
@@ -97,7 +97,7 @@ def photos(location):
 def about_me():
     templateData = {'title': 'About'}
     References = namedtuple('References', ['authors', 'title', 'reference', 'date', 'link', 'type'])
-    references = dict()
+    references = {}
     stmt = (db.select(Reference.authors, Reference.title,
                       Reference.refinfo, Reference.date,
                       Reference.reflink, Reference.reftype)
