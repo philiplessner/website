@@ -4,11 +4,13 @@
 {% endblock %}
 {% block content %}
 <div class="container">
-  <div class="mb-5">
-    <canvas id="countryChart"></canvas>
-  </div>
-  <div class="mb-5">
-    <canvas id="endpointChart"></canvas>
+  <div class="row">
+    <div class="col-md-6">
+      <canvas id="countryChart"></canvas>
+    </div>
+    <div class="col-md-6">
+      <canvas id="endpointChart"></canvas>
+    </div>
   </div>
 </div>
 <script id="countryChartData" type="application/json">{{ country_chart_data | tojson }}</script>
@@ -52,7 +54,7 @@
             beginAtZero: true,
             title: {
               display: true,
-              text: 'Percent of (Human) Visits',
+              text: '% of (Human) Visits',
               color: '#111',
               font: {
                 family: 'Arial',

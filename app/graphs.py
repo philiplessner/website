@@ -27,7 +27,7 @@ def countryCodes_humans():
     chart_data = {
         'countryCodes': countryCodes_humans[:10],
         'percentages': percentages_humans[:10],
-        'title': f'Percent Website Visits by Country for {past} to {yesterday}',
+        'title': f'Website Visits by Country for {past[:10]} to {yesterday[:10]}',
     }
     return chart_data
 
@@ -55,6 +55,6 @@ def endpoints_humans():
     chart_data = {
         'endpoints': endpoints_humans[:10],
         'percentages': percentages_humans[:10],
-        'title': f'Percent Website Visits by Endpoint for {past} to {yesterday}',
+        'title': f'Website Visits by Endpoint for {past[:10]} to {yesterday[:10]}',
     }
     return chart_data
