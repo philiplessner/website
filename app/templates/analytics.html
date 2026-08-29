@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block page_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+{% endblock %}
+{% block content %}
+<div>
+  <canvas id="myChart"></canvas>
+</div>
+<script id="chartData" type="application/json">{{ chart_data | tojson }}</script>
+<script>
+  const ctx = document.getElementById('myChart');
+  const chartData = JSON.parse(document.getElementById('chartData').textContent);
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: chartData.countryCodes,
+      datasets: [{
+        data: chartData.percentages,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      plugins: {
+        title: {
+          display: true,
+          text: chartData.title,
+          font: {
+            family: 'Arial',
+            size: 18
+          }
+        },
+        legend: {
+          display: false,
+          labels: {
+            color: 'rgb(255, 99, 132)'
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Percent of (Human) Visits',
+            color: '#111',
+            font: {
+              family: 'Arial',
+              size: 16
+            }
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Country Code',
+            color: '#111',
+            font: {
+              family: 'Arial',
+              size: 16
+            }
+          }
+        }
+      }
+    }
+  });
+</script>
+{% endblock %}
