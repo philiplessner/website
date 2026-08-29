@@ -8,7 +8,12 @@ from app.models import Blog, User
 
 from . import db
 from .forms import BlogEditForm, BlogSelectForm, LoginForm, SignupForm
-from .graphs import countryCodes_humans, endpoints_humans
+from .graphs import (
+    countryCodes_humans,
+    countryCodes_robots,
+    endpoints_humans,
+    endpoints_robots,
+)
 
 admin = Blueprint('admin', __name__)
 
@@ -168,9 +173,13 @@ def analytics():
     yesterday = (datetime.now(tz=timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
     past = (datetime.now(tz=timezone.utc) - timedelta(days=31)).strftime("%Y-%m-%d %H:%M:%S")
     countryCodes_humans_data = countryCodes_humans(past, yesterday)
+    countryCodes_robots_data = countryCodes_robots(past, yesterday)
     endpoints_humans_data = endpoints_humans(past, yesterday)
+    endpoints_robots_data = endpoints_robots(past, yesterday)
     templateData = {
-        'country_chart_data': countryCodes_humans_data,
-        'endpoint_chart_data': endpoints_humans_data,
+        'country_chart_data_humans': countryCodes_humans_data,
+        'endpoint_chart_data_humans': endpoints_humans_data,
+        'country_chart_data_robots': countryCodes_robots_data,
+        'endpoint_chart_data_robots': endpoints_robots_data,
     }
     return render_template('analytics.html', **templateData)

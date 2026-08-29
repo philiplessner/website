@@ -6,24 +6,40 @@
 <div class="container">
   <div class="row">
     <div class="col-md-6">
-      <canvas id="countryChart"></canvas>
+      <canvas id="countryChartHumans"></canvas>
     </div>
     <div class="col-md-6">
-      <canvas id="endpointChart"></canvas>
+      <canvas id="endpointChartHumans"></canvas>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <canvas id="countryChartRobots"></canvas>
+    </div>
+    <div class="col-md-6">
+      <canvas id="endpointChartRobots"></canvas>
     </div>
   </div>
 </div>
-<script id="countryChartData" type="application/json">{{ country_chart_data | tojson }}</script>
-<script id="endpointChartData" type="application/json">{{ endpoint_chart_data | tojson }}</script>
+<script id="countryChartDataHumans" type="application/json">{{ country_chart_data_humans | tojson }}</script>
+<script id="endpointChartDataHumans" type="application/json">{{ endpoint_chart_data_humans | tojson }}</script>
+<script id="countryChartDataRobots" type="application/json">{{ country_chart_data_robots | tojson }}</script>
+<script id="endpointChartDataRobots" type="application/json">{{ endpoint_chart_data_robots | tojson }}</script>
 <script>
-  const countryChartData = JSON.parse(
-    document.getElementById('countryChartData').textContent
+  const countryChartDataHumans = JSON.parse(
+    document.getElementById('countryChartDataHumans').textContent
   );
-  const endpointChartData = JSON.parse(
-    document.getElementById('endpointChartData').textContent
+  const endpointChartDataHumans = JSON.parse(
+    document.getElementById('endpointChartDataHumans').textContent
+  );
+  const countryChartDataRobots = JSON.parse(
+    document.getElementById('countryChartDataRobots').textContent
+  );
+  const endpointChartDataRobots = JSON.parse(
+    document.getElementById('endpointChartDataRobots').textContent
   );
 
-  function createBarChart(canvasId, chartData, labelKey, xAxisTitle) {
+  function createBarChart(canvasId, chartData, labelKey, xAxisTitle, yAxisTitle) {
     const ctx = document.getElementById(canvasId);
 
     return new Chart(ctx, {
@@ -54,7 +70,7 @@
             beginAtZero: true,
             title: {
               display: true,
-              text: '% of (Human) Visits',
+              text: yAxisTitle,
               color: '#111',
               font: {
                 family: 'Arial',
@@ -78,7 +94,33 @@
     });
   }
 
-  createBarChart('countryChart', countryChartData, 'countryCodes', 'Country Code');
-  createBarChart('endpointChart', endpointChartData, 'endpoints', 'Endpoint');
+  createBarChart(
+    'countryChartHumans',
+    countryChartDataHumans,
+    'countryCodes',
+    'Country Code',
+    '% of Human Visits'
+  );
+  createBarChart(
+    'endpointChartHumans',
+    endpointChartDataHumans,
+    'endpoints',
+    'Endpoint',
+    '% of Human Visits'
+  );
+  createBarChart(
+    'countryChartRobots',
+    countryChartDataRobots,
+    'countryCodes',
+    'Country Code',
+    '% of Robot Visits'
+  );
+  createBarChart(
+    'endpointChartRobots',
+    endpointChartDataRobots,
+    'endpoints',
+    'Endpoint',
+    '% of Robot Visits'
+  );
 </script>
 {% endblock %}

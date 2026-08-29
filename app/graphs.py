@@ -22,6 +22,25 @@ def countryCodes_humans(start_time, end_time):
     return chart_data
 
 
+def countryCodes_robots(start_time, end_time):
+    country_query_robots = """
+    SELECT countryCode, COUNT(*) AS count
+    FROM logs
+    WHERE Agent_Type = 'R'
+    AND strftime('%Y-%m-%d %H:%M:%S', datetime) BETWEEN ? AND ?
+    GROUP BY countryCode
+    ORDER BY count DESC
+    """
+    country_counts_robots = execute_query(country_query_robots, start_time, end_time)
+    countryCodes_robots, percentages_robots = barchart_values(country_counts_robots)
+    chart_data = {
+        'countryCodes': countryCodes_robots[:10],
+        'percentages': percentages_robots[:10],
+        'title': f'Website Visits by Country for {start_time[:10]} to {end_time[:10]}',
+    }
+    return chart_data
+
+
 def endpoints_humans(start_time, end_time):
     endpoint_query_humans = """
     SELECT endpoint, COUNT(*) AS count
@@ -36,6 +55,25 @@ def endpoints_humans(start_time, end_time):
     chart_data = {
         'endpoints': endpoints_humans[:10],
         'percentages': percentages_humans[:10],
+        'title': f'Website Visits by Endpoint for {start_time[:10]} to {end_time[:10]}',
+    }
+    return chart_data
+
+
+def endpoints_robots(start_time, end_time):
+    endpoint_query_robots= """
+    SELECT endpoint, COUNT(*) AS count
+    FROM logs
+    WHERE Agent_Type = 'R'
+    AND strftime('%Y-%m-%d %H:%M:%S', datetime) BETWEEN ? AND ?
+    GROUP BY endpoint
+    ORDER BY count DESC
+    """
+    endpoint_counts_robots = execute_query(endpoint_query_robots, start_time, end_time)
+    endpoints_robots, percentages_robots = barchart_values(endpoint_counts_robots)
+    chart_data = {
+        'endpoints':endpoints_robots[:10],
+        'percentages': percentages_robots[:10],
         'title': f'Website Visits by Endpoint for {start_time[:10]} to {end_time[:10]}',
     }
     return chart_data
