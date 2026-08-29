@@ -1,9 +1,8 @@
 import sqlite3
-from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 
-def countryCodes_humans():
+def countryCodes_humans(start_time, end_time):
     country_query_humans = """
     SELECT countryCode, COUNT(*) AS count
     FROM logs
@@ -13,26 +12,17 @@ def countryCodes_humans():
     GROUP BY countryCode
     ORDER BY count DESC
     """
-    grandparent = Path(__file__).resolve().parents[2]
-    path2db = Path(grandparent, 'logs/data.philiplessner.com/logs.db')
-    conn = sqlite3.connect(path2db)
-    yesterday = (datetime.now(tz=timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
-    past = (datetime.now(tz=timezone.utc) - timedelta(days=31)).strftime("%Y-%m-%d %H:%M:%S")
-    country_counts_humans = conn.execute(country_query_humans, (past, yesterday)).fetchall()
-    conn.close()
-    countryCodes_humans = [countryCode for countryCode, _ in country_counts_humans]
-    counts_humans = [count for _, count in country_counts_humans]
-    total = sum(counts_humans)
-    percentages_humans = [count/total*100. for count in counts_humans]
+    country_counts_humans = execute_query(country_query_humans, start_time, end_time)
+    countryCodes_humans, percentages_humans = barchart_values(country_counts_humans)
     chart_data = {
         'countryCodes': countryCodes_humans[:10],
         'percentages': percentages_humans[:10],
-        'title': f'Website Visits by Country for {past[:10]} to {yesterday[:10]}',
+        'title': f'Website Visits by Country for {start_time[:10]} to {end_time[:10]}',
     }
     return chart_data
 
 
-def endpoints_humans():
+def endpoints_humans(start_time, end_time):
     endpoint_query_humans = """
     SELECT endpoint, COUNT(*) AS count
     FROM logs
@@ -41,20 +31,28 @@ def endpoints_humans():
     GROUP BY endpoint
     ORDER BY count DESC
     """
-    grandparent = Path(__file__).resolve().parents[2]
-    path2db = Path(grandparent, 'logs/data.philiplessner.com/logs.db')
-    conn = sqlite3.connect(path2db)
-    yesterday = (datetime.now(tz=timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
-    past = (datetime.now(tz=timezone.utc) - timedelta(days=31)).strftime("%Y-%m-%d %H:%M:%S")
-    endpoint_counts_humans = conn.execute(endpoint_query_humans, (past, yesterday)).fetchall()
-    conn.close()
-    endpoints_humans = [endpoint for endpoint, _ in endpoint_counts_humans]
-    counts_humans = [count for _, count in endpoint_counts_humans]
-    total = sum(counts_humans)
-    percentages_humans = [count/total*100. for count in counts_humans]
+    endpoint_counts_humans = execute_query(endpoint_query_humans, start_time, end_time)
+    endpoints_humans, percentages_humans = barchart_values(endpoint_counts_humans)
     chart_data = {
         'endpoints': endpoints_humans[:10],
         'percentages': percentages_humans[:10],
-        'title': f'Website Visits by Endpoint for {past[:10]} to {yesterday[:10]}',
+        'title': f'Website Visits by Endpoint for {start_time[:10]} to {end_time[:10]}',
     }
     return chart_data
+
+
+def execute_query(query, start_time, end_time):
+    grandparent = Path(__file__).resolve().parents[2]
+    path2db = Path(grandparent, 'logs/data.philiplessner.com/logs.db')
+    conn = sqlite3.connect(path2db)
+    results = conn.execute(query, (start_time, end_time)).fetchall()
+    conn.close()
+    return results
+
+
+def barchart_values(query_results):
+    category_values = [category for category, _ in query_results]
+    y_absolute_values = [count for _, count in query_results]
+    total = sum(y_absolute_values)
+    percentages = [count/total*100. for count in y_absolute_values]
+    return category_values, percentages

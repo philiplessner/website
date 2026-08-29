@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta, timezone
+
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -163,8 +165,10 @@ def blog_edit(blogid):
 def analytics():
     if not current_user.is_authenticated:
         return redirect(url_for('admin.login'))
-    countryCodes_humans_data = countryCodes_humans()
-    endpoints_humans_data = endpoints_humans()
+    yesterday = (datetime.now(tz=timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
+    past = (datetime.now(tz=timezone.utc) - timedelta(days=31)).strftime("%Y-%m-%d %H:%M:%S")
+    countryCodes_humans_data = countryCodes_humans(past, yesterday)
+    endpoints_humans_data = endpoints_humans(past, yesterday)
     templateData = {
         'country_chart_data': countryCodes_humans_data,
         'endpoint_chart_data': endpoints_humans_data,
