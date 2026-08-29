@@ -6,7 +6,7 @@ from app.models import Blog, User
 
 from . import db
 from .forms import BlogEditForm, BlogSelectForm, LoginForm, SignupForm
-from .graphs import countryCodes_humans
+from .graphs import countryCodes_humans, endpoints_humans
 
 admin = Blueprint('admin', __name__)
 
@@ -164,7 +164,9 @@ def analytics():
     if not current_user.is_authenticated:
         return redirect(url_for('admin.login'))
     countryCodes_humans_data = countryCodes_humans()
+    endpoints_humans_data = endpoints_humans()
     templateData = {
-        'chart_data': countryCodes_humans_data,
+        'country_chart_data': countryCodes_humans_data,
+        'endpoint_chart_data': endpoints_humans_data,
     }
     return render_template('analytics.html', **templateData)

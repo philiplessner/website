@@ -3,66 +3,80 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
 {% endblock %}
 {% block content %}
-<div>
-  <canvas id="myChart"></canvas>
+<div class="container">
+  <div class="mb-5">
+    <canvas id="countryChart"></canvas>
+  </div>
+  <div class="mb-5">
+    <canvas id="endpointChart"></canvas>
+  </div>
 </div>
-<script id="chartData" type="application/json">{{ chart_data | tojson }}</script>
+<script id="countryChartData" type="application/json">{{ country_chart_data | tojson }}</script>
+<script id="endpointChartData" type="application/json">{{ endpoint_chart_data | tojson }}</script>
 <script>
-  const ctx = document.getElementById('myChart');
-  const chartData = JSON.parse(document.getElementById('chartData').textContent);
+  const countryChartData = JSON.parse(
+    document.getElementById('countryChartData').textContent
+  );
+  const endpointChartData = JSON.parse(
+    document.getElementById('endpointChartData').textContent
+  );
 
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: chartData.countryCodes,
-      datasets: [{
-        data: chartData.percentages,
-        borderWidth: 1
-      }]
-    },
-    options: {
-      plugins: {
-        title: {
-          display: true,
-          text: chartData.title,
-          font: {
-            family: 'Arial',
-            size: 18
-          }
-        },
-        legend: {
-          display: false,
-          labels: {
-            color: 'rgb(255, 99, 132)'
-          }
-        }
+  function createBarChart(canvasId, chartData, labelKey, xAxisTitle) {
+    const ctx = document.getElementById(canvasId);
+
+    return new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: chartData[labelKey],
+        datasets: [{
+          data: chartData.percentages,
+          borderWidth: 1
+        }]
       },
-      scales: {
-        y: {
-          beginAtZero: true,
+      options: {
+        plugins: {
           title: {
             display: true,
-            text: 'Percent of (Human) Visits',
-            color: '#111',
+            text: chartData.title,
             font: {
               family: 'Arial',
-              size: 16
+              size: 18
             }
+          },
+          legend: {
+            display: false
           }
         },
-        x: {
-          title: {
-            display: true,
-            text: 'Country Code',
-            color: '#111',
-            font: {
-              family: 'Arial',
-              size: 16
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Percent of (Human) Visits',
+              color: '#111',
+              font: {
+                family: 'Arial',
+                size: 16
+              }
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: xAxisTitle,
+              color: '#111',
+              font: {
+                family: 'Arial',
+                size: 16
+              }
             }
           }
         }
       }
-    }
-  });
+    });
+  }
+
+  createBarChart('countryChart', countryChartData, 'countryCodes', 'Country Code');
+  createBarChart('endpointChart', endpointChartData, 'endpoints', 'Endpoint');
 </script>
 {% endblock %}
