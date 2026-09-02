@@ -1,0 +1,11 @@
+.code-editor .cm-editor {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+}
+
+.code-editor .cm-gutters {
+    background-color: var(--bs-tertiary-bg);
+    border-bottom-left-radius: var(--bs-border-radius);
+    border-top-left-radius: var(--bs-border-radius);
+    color: var(--bs-secondary-color);
+}

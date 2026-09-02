@@ -7,4 +7,5 @@ scripts/credentials.json
 scripts/token.json
 scripts/links.txt
 .env
+node_modules/
 app/db/website.db

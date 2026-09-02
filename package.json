@@ -1,0 +1,15 @@
+{
+  "name": "philip-lessner-website",
+  "private": true,
+  "scripts": {
+    "build": "esbuild frontend/blogedit.js --bundle --minify --outfile=app/static/js/blogedit.js",
+    "build:watch": "npm run build -- --watch"
+  },
+  "dependencies": {
+    "@codemirror/lang-html": "6.4.12",
+    "codemirror": "6.0.2"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}

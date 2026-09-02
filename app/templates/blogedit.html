@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blogedit.css') }}">
+{% endblock %}
 {% block content %}
 
 <div class="container-fluid my-3 mx-8">
@@ -33,11 +36,11 @@
     </div>
     <div class="mb-3">
         {{ form.blogbody.label(class='form-label') }}<br>
-        {{ form.blogbody(class='form-control', rows='20') | safe }}
+        {{ form.blogbody(class='form-control code-editor-source', rows='20', data_editor_height='30rem') | safe }}
     </div>
     <div class="mb-3">
         {{ form.blogpagecss.label(class='form-label') }}<br>
-        {{ form.blogpagecss(class='form-control', rows='5') }}
+        {{ form.blogpagecss(class='form-control code-editor-source', rows='5', data_editor_height='15rem') }}
     </div>
     <div class="mb-3">
         {{ form.blogmedialink.label(class='form-label') }}<br>
@@ -51,4 +54,8 @@
 </form>
 </div>
 
+{% endblock %}
+
+{% block page_scripts %}
+<script src="{{ url_for('static', filename='js/blogedit.js') }}" defer></script>
 {% endblock %}
