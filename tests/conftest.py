@@ -1,4 +1,5 @@
 import os
+import sqlite3
 
 import pytest
 
@@ -10,14 +11,19 @@ def test_client():
     app = create_app()
     path2this_directory = os.path.abspath(os.path.dirname(__file__))
     path2parent_directory = os.path.abspath(os.path.join(path2this_directory, os.pardir))
+    database_path = os.path.join(path2parent_directory, 'app/db/website.db')
     app.config.update({
         "TESTING": True,
         "WTF_CSRF_ENABLED": False,
-        "SQLALCHEMY_DATABASE_URI": f"sqlite:///{os.path.join(path2parent_directory, 'app/db/website.db')}"
+        "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:"
     })
     db.init_app(app)
     with app.app_context():
-        db.create_all()
-    with app.test_client() as testing_client:
-        with app.app_context():
-            yield testing_client
+        destination = db.engine.raw_connection()
+        try:
+            with sqlite3.connect(database_path) as source:
+                source.backup(destination.driver_connection)
+        finally:
+            destination.close()
+    with app.test_client() as testing_client, app.app_context():
+        yield testing_client
