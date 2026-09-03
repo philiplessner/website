@@ -3,7 +3,7 @@ This file contains the unit tests for the models.py file
 '''
 
 
-from app.models import Page, Image, Reference, Blog
+from app.models import Blog, Image, Page, Reference
 
 
 def test_new_page():

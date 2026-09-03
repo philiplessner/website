@@ -16,6 +16,11 @@ def test_blog_page(test_client):
     assert b"Blog" in response.data
 
 
+def test_missing_blogpost_returns_not_found(test_client):
+    response = test_client.get('/blog/2147483647')
+    assert response.status_code == 404
+
+
 def test_photos_pages(test_client):
     response = test_client.get('/photos/ecuador')
     assert response.status_code == 200
@@ -62,7 +67,6 @@ def test_login_with_correct_credentials(test_client):
     response = test_client.post('/login', data={
         'email': 'login-success@example.com',
         'password': 'secret123',
-        'remember_me': False,
     }, follow_redirects=False)
 
     assert response.status_code == 302
@@ -79,7 +83,6 @@ def test_login_with_incorrect_credentials(test_client):
     response = test_client.post('/login', data={
         'email': 'missing@example.com',
         'password': 'wrong-password',
-        'remember_me': False,
     }, follow_redirects=True)
 
     assert response.status_code == 200

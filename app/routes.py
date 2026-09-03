@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-from flask import Blueprint, render_template, send_from_directory
+from flask import Blueprint, abort, render_template, send_from_directory
 from sqlalchemy import func
 
 from app import db
@@ -59,7 +59,10 @@ def blogpost(blogid):
     stmt = (db.select(Blog.title, Blog.body, Blog.date, Blog.id, Blog.pagecss)
                       .select_from(Blog)
                       .where(Blog.id == blogid))
-    blog = Post(*(db.session.execute(stmt).all()[0]))
+    blog = db.session.execute(stmt).first()
+    if blog is None:
+        abort(404)
+    blog = Post(*blog)
     templateData = {"blogdata": blog}
     templateData['title'] = "Blog"
     return render_template('blogpost.html', **templateData)
@@ -126,4 +129,3 @@ def about_me():
 @bp.route("/resume/<path:filename>")
 def download_resume(filename):
     return(send_from_directory("files", filename))
-
