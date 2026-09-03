@@ -6,8 +6,8 @@ import pytest
 from app import create_app, db
 
 
-@pytest.fixture(scope='module')
-def test_client():
+@pytest.fixture
+def test_app():
     app = create_app()
     path2this_directory = os.path.abspath(os.path.dirname(__file__))
     path2parent_directory = os.path.abspath(os.path.join(path2this_directory, os.pardir))
@@ -25,5 +25,16 @@ def test_client():
                 source.backup(destination.driver_connection)
         finally:
             destination.close()
-    with app.test_client() as testing_client, app.app_context():
+    yield app
+
+
+@pytest.fixture
+def test_database(test_app):
+    with test_app.app_context():
+        yield db
+
+
+@pytest.fixture
+def test_client(test_app):
+    with test_app.test_client() as testing_client:
         yield testing_client
