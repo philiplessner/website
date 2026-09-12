@@ -20,11 +20,17 @@
       <canvas id="endpointChartRobots"></canvas>
     </div>
   </div>
+  <div class="row mt-4">
+    <div class="col-12">
+      <canvas id="visitsChart"></canvas>
+    </div>
+  </div>
 </div>
 <script id="countryChartDataHumans" type="application/json">{{ country_chart_data_humans | tojson }}</script>
 <script id="endpointChartDataHumans" type="application/json">{{ endpoint_chart_data_humans | tojson }}</script>
 <script id="countryChartDataRobots" type="application/json">{{ country_chart_data_robots | tojson }}</script>
 <script id="endpointChartDataRobots" type="application/json">{{ endpoint_chart_data_robots | tojson }}</script>
+<script id="visitsChartData" type="application/json">{{ visits_chart_data | tojson }}</script>
 <script>
   const countryChartDataHumans = JSON.parse(
     document.getElementById('countryChartDataHumans').textContent
@@ -37,6 +43,9 @@
   );
   const endpointChartDataRobots = JSON.parse(
     document.getElementById('endpointChartDataRobots').textContent
+  );
+  const visitsChartData = JSON.parse(
+    document.getElementById('visitsChartData').textContent
   );
 
   function createBarChart(canvasId, chartData, labelKey, xAxisTitle, yAxisTitle) {
@@ -94,6 +103,70 @@
     });
   }
 
+  function createLineChart(canvasId, chartData) {
+    const ctx = document.getElementById(canvasId);
+
+    return new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: chartData.dates,
+        datasets: [
+          {
+            label: 'Human Visits',
+            data: chartData.humans,
+            borderColor: '#0d6efd',
+            backgroundColor: '#0d6efd',
+            tension: 0.1
+          },
+          {
+            label: 'Robot Visits',
+            data: chartData.robots,
+            borderColor: '#dc3545',
+            backgroundColor: '#dc3545',
+            tension: 0.1
+          }
+        ]
+      },
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: 'Daily Website Visits',
+            font: {
+              family: 'Arial',
+              size: 18
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Visits',
+              color: '#111',
+              font: {
+                family: 'Arial',
+                size: 16
+              }
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Date',
+              color: '#111',
+              font: {
+                family: 'Arial',
+                size: 16
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
   createBarChart(
     'countryChartHumans',
     countryChartDataHumans,
@@ -122,5 +195,6 @@
     'Endpoint',
     '% of Robot Visits'
   );
+  createLineChart('visitsChart', visitsChartData);
 </script>
 {% endblock %}

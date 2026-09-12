@@ -79,6 +79,28 @@ def endpoints_robots(start_time, end_time):
     return chart_data
 
 
+def visits(start_time, end_time):
+    visits_query = """
+    SELECT DATE(datetime) AS visit_day,
+        COUNT(*) AS total_visits,
+        COUNT(CASE WHEN Agent_Type = 'H' THEN 1 END) AS human_visits,
+        COUNT(CASE WHEN Agent_Type = 'R' THEN 1 END) AS robot_visits
+    FROM logs
+    WHERE strftime('%Y-%m-%d %H:%M:%S', datetime) BETWEEN ? AND ?
+    AND status_code <> 404
+    GROUP BY DATE(datetime)
+    ORDER BY visit_day;
+    """
+    visits_counts = execute_query(visits_query, start_time, end_time)
+    dates, humans, robots = linechart_values(visits_counts)
+    chart_data = {
+        'dates': dates,
+        'humans': humans,
+        'robots': robots,
+    }
+    return chart_data
+
+
 def execute_query(query, start_time, end_time):
     grandparent = Path(__file__).resolve().parents[2]
     path2db = Path(grandparent, 'logs/data.philiplessner.com/logs.db')
@@ -94,3 +116,10 @@ def barchart_values(query_results):
     total = sum(y_absolute_values)
     percentages = [count/total*100. for count in y_absolute_values]
     return category_values, percentages
+
+
+def linechart_values(query_results):
+    dates = [date for date, _, _, _ in query_results]
+    humans = [human for _,_, human, _ in query_results]
+    robots = [robot for _, _, _, robot in query_results]
+    return dates, humans, robots

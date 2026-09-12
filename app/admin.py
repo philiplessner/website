@@ -13,6 +13,7 @@ from .graphs import (
     countryCodes_robots,
     endpoints_humans,
     endpoints_robots,
+    visits,
 )
 
 admin = Blueprint('admin', __name__)
@@ -176,10 +177,12 @@ def analytics():
     countryCodes_robots_data = countryCodes_robots(past, yesterday)
     endpoints_humans_data = endpoints_humans(past, yesterday)
     endpoints_robots_data = endpoints_robots(past, yesterday)
+    visits_data = visits(past, yesterday)
     templateData = {
         'country_chart_data_humans': countryCodes_humans_data,
         'endpoint_chart_data_humans': endpoints_humans_data,
         'country_chart_data_robots': countryCodes_robots_data,
         'endpoint_chart_data_robots': endpoints_robots_data,
+        'visits_chart_data': visits_data,
     }
     return render_template('analytics.html', **templateData)
