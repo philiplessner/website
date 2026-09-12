@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import (
     BooleanField,
+    DateField,
     PasswordField,
     SelectField,
     StringField,
@@ -42,3 +43,15 @@ class BlogEditForm(FlaskForm):
     blogmediatype = StringField('Media Type', validators=[DataRequired(message='Media Type is Required')])
     submit_commit = SubmitField('Publish Blog')
     submit_cancel = SubmitField('Cancel', render_kw={'formnovalidate': True})
+
+
+class AnalyticsDateRangeForm(FlaskForm):
+    start_date = DateField(
+        'Start date',
+        validators=[DataRequired(message='A start date is required.')],
+    )
+    end_date = DateField(
+        'End date',
+        validators=[DataRequired(message='An end date is required.')],
+    )
+    submit = SubmitField('Update graphs')

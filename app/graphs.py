@@ -2,6 +2,17 @@ import sqlite3
 from pathlib import Path
 
 
+def log_database_path():
+    grandparent = Path(__file__).resolve().parents[2]
+    return Path(grandparent, 'logs/data.philiplessner.com/logs.db')
+
+
+def log_date_bounds():
+    query = "SELECT MIN(DATE(datetime)), MAX(DATE(datetime)) FROM logs"
+    with sqlite3.connect(log_database_path()) as conn:
+        return conn.execute(query).fetchone()
+
+
 def countryCodes_humans(start_time, end_time):
     country_query_humans = """
     SELECT countryCode, COUNT(*) AS count
@@ -102,12 +113,8 @@ def visits(start_time, end_time):
 
 
 def execute_query(query, start_time, end_time):
-    grandparent = Path(__file__).resolve().parents[2]
-    path2db = Path(grandparent, 'logs/data.philiplessner.com/logs.db')
-    conn = sqlite3.connect(path2db)
-    results = conn.execute(query, (start_time, end_time)).fetchall()
-    conn.close()
-    return results
+    with sqlite3.connect(log_database_path()) as conn:
+        return conn.execute(query, (start_time, end_time)).fetchall()
 
 
 def barchart_values(query_results):

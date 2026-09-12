@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
@@ -7,12 +7,19 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from app.models import Blog, User
 
 from . import db
-from .forms import BlogEditForm, BlogSelectForm, LoginForm, SignupForm
+from .forms import (
+    AnalyticsDateRangeForm,
+    BlogEditForm,
+    BlogSelectForm,
+    LoginForm,
+    SignupForm,
+)
 from .graphs import (
     countryCodes_humans,
     countryCodes_robots,
     endpoints_humans,
     endpoints_robots,
+    log_date_bounds,
     visits,
 )
 
@@ -167,22 +174,59 @@ def blog_edit(blogid):
             return render_template('blogedit.html', form=form, blogid=blogid)
 
 
-@admin.route('/analytics')
+@admin.route('/analytics', methods=['GET', 'POST'])
 def analytics():
     if not current_user.is_authenticated:
         return redirect(url_for('admin.login'))
-    yesterday = (datetime.now(tz=timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
-    past = (datetime.now(tz=timezone.utc) - timedelta(days=31)).strftime("%Y-%m-%d %H:%M:%S")
-    countryCodes_humans_data = countryCodes_humans(past, yesterday)
-    countryCodes_robots_data = countryCodes_robots(past, yesterday)
-    endpoints_humans_data = endpoints_humans(past, yesterday)
-    endpoints_robots_data = endpoints_robots(past, yesterday)
-    visits_data = visits(past, yesterday)
+
+    now = datetime.now(tz=timezone.utc)
+    default_start_date = (now - timedelta(days=31)).date()
+    default_end_date = (now - timedelta(days=1)).date()
+    oldest_date_string, newest_date_string = log_date_bounds()
+    form = AnalyticsDateRangeForm()
+    date_error = None
+    start_date = default_start_date
+    end_date = default_end_date
+
+    if oldest_date_string is None or newest_date_string is None:
+        date_error = 'No dates are available in the analytics database.'
+    else:
+        oldest_date = date.fromisoformat(oldest_date_string)
+        newest_date = date.fromisoformat(newest_date_string)
+
+        if request.method == 'GET':
+            form.start_date.data = default_start_date
+            form.end_date.data = default_end_date
+        elif form.validate_on_submit():
+            if form.start_date.data > form.end_date.data:
+                date_error = 'The start date must be on or before the end date.'
+            elif form.start_date.data < oldest_date or form.end_date.data > newest_date:
+                date_error = (
+                    f'Dates must be between {oldest_date_string} and '
+                    f'{newest_date_string}.'
+                )
+            else:
+                start_date = form.start_date.data
+                end_date = form.end_date.data
+        else:
+            date_error = 'Please select valid start and end dates.'
+
+    start_time = f'{start_date.isoformat()} 00:00:00'
+    end_time = f'{end_date.isoformat()} 23:59:59'
+    countryCodes_humans_data = countryCodes_humans(start_time, end_time)
+    countryCodes_robots_data = countryCodes_robots(start_time, end_time)
+    endpoints_humans_data = endpoints_humans(start_time, end_time)
+    endpoints_robots_data = endpoints_robots(start_time, end_time)
+    visits_data = visits(start_time, end_time)
     templateData = {
         'country_chart_data_humans': countryCodes_humans_data,
         'endpoint_chart_data_humans': endpoints_humans_data,
         'country_chart_data_robots': countryCodes_robots_data,
         'endpoint_chart_data_robots': endpoints_robots_data,
         'visits_chart_data': visits_data,
+        'date_form': form,
+        'date_error': date_error,
+        'oldest_date': oldest_date_string,
+        'newest_date': newest_date_string,
     }
     return render_template('analytics.html', **templateData)

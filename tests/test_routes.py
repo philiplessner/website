@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from werkzeug.security import generate_password_hash
 
 from app import db
@@ -87,3 +89,61 @@ def test_login_with_incorrect_credentials(test_client):
 
     assert response.status_code == 200
     assert b'Incorrect Email or Password' in response.data
+
+
+def analytics_graph_data():
+    return {
+        'countryCodes': ['US'],
+        'endpoints': ['/'],
+        'percentages': [100.0],
+        'dates': ['2026-08-01'],
+        'humans': [1],
+        'robots': [1],
+        'title': 'Analytics test',
+    }
+
+
+def test_analytics_accepts_dates_within_database_range(test_client):
+    graph_data = analytics_graph_data()
+    with (
+        patch('app.admin.current_user') as current_user,
+        patch('app.admin.log_date_bounds', return_value=('2026-07-12', '2026-09-12')),
+        patch('app.admin.countryCodes_humans', return_value=graph_data) as country_chart,
+        patch('app.admin.countryCodes_robots', return_value=graph_data),
+        patch('app.admin.endpoints_humans', return_value=graph_data),
+        patch('app.admin.endpoints_robots', return_value=graph_data),
+        patch('app.admin.visits', return_value=graph_data),
+    ):
+        current_user.is_authenticated = True
+        response = test_client.post('/analytics', data={
+            'start_date': '2026-08-01',
+            'end_date': '2026-08-31',
+        })
+
+    assert response.status_code == 200
+    assert b'id="visitsChart"' in response.data
+    country_chart.assert_called_once_with(
+        '2026-08-01 00:00:00',
+        '2026-08-31 23:59:59',
+    )
+
+
+def test_analytics_rejects_dates_outside_database_range(test_client):
+    graph_data = analytics_graph_data()
+    with (
+        patch('app.admin.current_user') as current_user,
+        patch('app.admin.log_date_bounds', return_value=('2026-07-12', '2026-09-12')),
+        patch('app.admin.countryCodes_humans', return_value=graph_data),
+        patch('app.admin.countryCodes_robots', return_value=graph_data),
+        patch('app.admin.endpoints_humans', return_value=graph_data),
+        patch('app.admin.endpoints_robots', return_value=graph_data),
+        patch('app.admin.visits', return_value=graph_data),
+    ):
+        current_user.is_authenticated = True
+        response = test_client.post('/analytics', data={
+            'start_date': '2026-07-01',
+            'end_date': '2026-08-31',
+        })
+
+    assert response.status_code == 200
+    assert b'Dates must be between 2026-07-12 and 2026-09-12.' in response.data

@@ -4,6 +4,33 @@
 {% endblock %}
 {% block content %}
 <div class="container">
+  <form method="post" class="row gy-2 gx-3 align-items-end mb-4">
+    {{ date_form.hidden_tag() }}
+    <div class="col-sm-auto">
+      {{ date_form.start_date.label(class_="form-label") }}
+      {{ date_form.start_date(
+        class_="form-control",
+        min=oldest_date,
+        max=newest_date
+      ) }}
+    </div>
+    <div class="col-sm-auto">
+      {{ date_form.end_date.label(class_="form-label") }}
+      {{ date_form.end_date(
+        class_="form-control",
+        min=oldest_date,
+        max=newest_date
+      ) }}
+    </div>
+    <div class="col-sm-auto">
+      {{ date_form.submit(class_="btn btn-primary") }}
+    </div>
+    {% if date_error %}
+      <div class="col-12">
+        <div class="alert alert-danger mb-0" role="alert">{{ date_error }}</div>
+      </div>
+    {% endif %}
+  </form>
   <div class="row">
     <div class="col-md-6">
       <canvas id="countryChartHumans"></canvas>
