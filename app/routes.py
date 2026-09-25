@@ -6,9 +6,9 @@ from sqlalchemy import func
 from app import db
 from app.models import Blog, Image, Page, Reference
 
-bp = Blueprint('views', __name__, url_prefix='/')
+public = Blueprint('public', __name__, url_prefix='/')
 
-@bp.route("/")
+@public.route("/")
 def home():
     templateData = {
             'title': 'Home',
@@ -23,16 +23,16 @@ def home():
     return render_template('index.html', **templateData)
 
 
-@bp.route('/<path:filename>')
+@public.route('/<path:filename>')
 def searchengine(filename):
     return send_from_directory('static', filename)
 
-@bp.route("/favicon.ico")
+@public.route("/favicon.ico")
 def favicon():
     return send_from_directory('static/images/', 'favicon.ico')
 
 
-@bp.route("/blog")
+@public.route("/blog")
 def blog():
     stmt = (db.select(Blog.title, Blog.abstract, Blog.date, Blog.medialink, Blog.mediatype, Blog.id)
                       .select_from(Blog)
@@ -53,7 +53,7 @@ def blog():
     return render_template('blog.html', **templateData)
 
 
-@bp.route("/blog/<blogid>")
+@public.route("/blog/<blogid>")
 def blogpost(blogid):
     Post  = namedtuple('Post', ['title', 'body', 'date', 'id', 'pagecss'])
     stmt = (db.select(Blog.title, Blog.body, Blog.date, Blog.id, Blog.pagecss)
@@ -68,7 +68,7 @@ def blogpost(blogid):
     return render_template('blogpost.html', **templateData)
 
 
-@bp.route("/photos/<location>")
+@public.route("/photos/<location>")
 def photos(location):
     '''
     cap_location(str): Page Name (first letter should be capitalized). This is used to look up
@@ -96,7 +96,7 @@ def photos(location):
     return render_template('photos_template.html', **templateData)
 
 
-@bp.route("/aboutme")
+@public.route("/aboutme")
 def about_me():
     templateData = {'title': 'About'}
     References = namedtuple('References', ['authors', 'title', 'reference', 'date', 'link', 'type'])
@@ -126,6 +126,6 @@ def about_me():
     templateData.update(references)
     return render_template('about_me.html', **templateData)
 
-@bp.route("/resume/<path:filename>")
+@public.route("/resume/<path:filename>")
 def download_resume(filename):
     return(send_from_directory("files", filename))
